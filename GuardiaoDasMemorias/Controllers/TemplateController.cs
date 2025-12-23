@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using GuardiaoDasMemorias.Entities;
+using GuardiaoDasMemorias.Repository.Queries.Template;
+using GuardiaoDasMemorias.Repository.Commands.Template;
 
 namespace GuardiaoDasMemorias.Controllers
 {
@@ -7,54 +9,32 @@ namespace GuardiaoDasMemorias.Controllers
     [ApiController]
     public class TemplateController : ControllerBase
     {
-        private static readonly List<Template> _templates = new()
+        private readonly ITemplateQueries _templateQueries;
+        private readonly ITemplateCommands _templateCommands;
+
+        public TemplateController(ITemplateQueries templateQueries, ITemplateCommands templateCommands)
         {
-            new Template
-            {
-                Id = 1,
-                Nome = "Template Romântico Clássico",
-                Ativo = true,
-                TemaId = 1
-            },
-            new Template
-            {
-                Id = 2,
-                Nome = "Template Infantil Alegre",
-                Ativo = true,
-                TemaId = 2
-            },
-            new Template
-            {
-                Id = 3,
-                Nome = "Template Corporativo Profissional",
-                Ativo = true,
-                TemaId = 3
-            },
-            new Template
-            {
-                Id = 4,
-                Nome = "Template Festivo Colorido",
-                Ativo = true,
-                TemaId = 4
-            }
-        };
+            _templateQueries = templateQueries;
+            _templateCommands = templateCommands;
+        }
 
         /// <summary>
         /// Obtém todos os templates
         /// </summary>
         [HttpGet]
-        public ActionResult<IEnumerable<Template>> GetAll()
+        public async Task<ActionResult> GetAll()
         {
-            return Ok(_templates);
+            var templates = await _templateQueries.GetAllAsync();
+            return Ok(templates);
         }
 
         /// <summary>
         /// Obtém um template específico por ID
         /// </summary>
         [HttpGet("{id}")]
-        public ActionResult<Template> GetById(int id)
+        public async Task<ActionResult> GetById(int id)
         {
-            var template = _templates.FirstOrDefault(t => t.Id == id);
+            var template = await _templateQueries.GetByIdAsync(id);
             if (template == null)
             {
                 return NotFound(new { message = "Template não encontrado" });
@@ -66,45 +46,45 @@ namespace GuardiaoDasMemorias.Controllers
         /// Cria um novo template
         /// </summary>
         [HttpPost]
-        public ActionResult<Template> Create([FromBody] Template template)
+        public async Task<ActionResult> Create([FromBody] Template template)
         {
-            template.Id = _templates.Any() ? _templates.Max(t => t.Id) + 1 : 1;
-            _templates.Add(template);
-            return CreatedAtAction(nameof(GetById), new { id = template.Id }, template);
+            var id = await _templateCommands.CreateAsync(template);
+            var templateCreated = await _templateQueries.GetByIdAsync(id);
+            return CreatedAtAction(nameof(GetById), new { id }, templateCreated);
         }
 
         /// <summary>
         /// Atualiza um template existente
         /// </summary>
         [HttpPut("{id}")]
-        public ActionResult<Template> Update(int id, [FromBody] Template templateAtualizado)
+        public async Task<ActionResult> Update(int id, [FromBody] Template templateAtualizado)
         {
-            var template = _templates.FirstOrDefault(t => t.Id == id);
-            if (template == null)
+            var templateExistente = await _templateQueries.GetByIdAsync(id);
+            if (templateExistente == null)
             {
                 return NotFound(new { message = "Template não encontrado" });
             }
 
-            template.Nome = templateAtualizado.Nome;
-            template.Ativo = templateAtualizado.Ativo;
-            template.TemaId = templateAtualizado.TemaId;
+            templateAtualizado.Id = id;
+            await _templateCommands.UpdateAsync(templateAtualizado);
 
-            return Ok(template);
+            var templateAtualiz = await _templateQueries.GetByIdAsync(id);
+            return Ok(templateAtualiz);
         }
 
         /// <summary>
         /// Exclui um template
         /// </summary>
         [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var template = _templates.FirstOrDefault(t => t.Id == id);
+            var template = await _templateQueries.GetByIdAsync(id);
             if (template == null)
             {
                 return NotFound(new { message = "Template não encontrado" });
             }
 
-            _templates.Remove(template);
+            await _templateCommands.DeleteAsync(id);
             return NoContent();
         }
 
@@ -112,9 +92,9 @@ namespace GuardiaoDasMemorias.Controllers
         /// Obtém todos os templates de um tema específico
         /// </summary>
         [HttpGet("tema/{temaId}")]
-        public ActionResult<IEnumerable<Template>> GetByTema(int temaId)
+        public async Task<ActionResult> GetByTema(int temaId)
         {
-            var templates = _templates.Where(t => t.TemaId == temaId);
+            var templates = await _templateQueries.GetByTemaIdAsync(temaId);
             return Ok(templates);
         }
 
@@ -122,9 +102,9 @@ namespace GuardiaoDasMemorias.Controllers
         /// Obtém apenas templates ativos
         /// </summary>
         [HttpGet("ativos")]
-        public ActionResult<IEnumerable<Template>> GetAtivos()
+        public async Task<ActionResult> GetAtivos()
         {
-            var templates = _templates.Where(t => t.Ativo);
+            var templates = await _templateQueries.GetAtivosAsync();
             return Ok(templates);
         }
 
@@ -132,16 +112,18 @@ namespace GuardiaoDasMemorias.Controllers
         /// Ativa ou desativa um template
         /// </summary>
         [HttpPatch("{id}/toggle-ativo")]
-        public ActionResult<Template> ToggleAtivo(int id)
+        public async Task<ActionResult> ToggleAtivo(int id)
         {
-            var template = _templates.FirstOrDefault(t => t.Id == id);
+            var template = await _templateQueries.GetByIdAsync(id);
             if (template == null)
             {
                 return NotFound(new { message = "Template não encontrado" });
             }
 
-            template.Ativo = !template.Ativo;
-            return Ok(template);
+            await _templateCommands.ToggleAtivoAsync(id);
+            
+            var templateAtualizado = await _templateQueries.GetByIdAsync(id);
+            return Ok(templateAtualizado);
         }
     }
 }

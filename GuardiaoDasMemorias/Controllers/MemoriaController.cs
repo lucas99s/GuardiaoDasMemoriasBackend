@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using GuardiaoDasMemorias.Entities;
+using GuardiaoDasMemorias.Repository.Queries.Memoria;
+using GuardiaoDasMemorias.Repository.Commands.Memoria;
 
 namespace GuardiaoDasMemorias.Controllers
 {
@@ -8,47 +10,32 @@ namespace GuardiaoDasMemorias.Controllers
     [ApiController]
     public class MemoriaController : ControllerBase
     {
-        private static readonly List<Memoria> _memorias = new()
+        private readonly IMemoriaQueries _memoriaQueries;
+        private readonly IMemoriaCommands _memoriaCommands;
+
+        public MemoriaController(IMemoriaQueries memoriaQueries, IMemoriaCommands memoriaCommands)
         {
-            new Memoria
-            {
-                Id = 1,
-                TemaId = 1,
-                TemplateId = 101,
-                ClienteId = 1
-            },
-            new Memoria
-            {
-                Id = 2,
-                TemaId = 2,
-                TemplateId = 102,
-                ClienteId = 1
-            },
-            new Memoria
-            {
-                Id = 3,
-                TemaId = 3,
-                TemplateId = 103,
-                ClienteId = 2
-            }
-        };
+            _memoriaQueries = memoriaQueries;
+            _memoriaCommands = memoriaCommands;
+        }
 
         /// <summary>
         /// Obtém todas as memórias
         /// </summary>
         [HttpGet]
-        public ActionResult<IEnumerable<Memoria>> GetAll()
+        public async Task<ActionResult> GetAll()
         {
-            return Ok(_memorias);
+            var memorias = await _memoriaQueries.GetAllAsync();
+            return Ok(memorias);
         }
 
         /// <summary>
         /// Obtém uma memória específica por ID
         /// </summary>
         [HttpGet("{id}")]
-        public ActionResult<Memoria> GetById(int id)
+        public async Task<ActionResult> GetById(int id)
         {
-            var memoria = _memorias.FirstOrDefault(t => t.Id == id);
+            var memoria = await _memoriaQueries.GetByIdAsync(id);
             if (memoria == null)
             {
                 return NotFound(new { message = "Memória não encontrada" });
@@ -60,45 +47,45 @@ namespace GuardiaoDasMemorias.Controllers
         /// Cria uma nova memória
         /// </summary>
         [HttpPost]
-        public ActionResult<Memoria> Create([FromBody] Memoria memoria)
+        public async Task<ActionResult> Create([FromBody] Memoria memoria)
         {
-            memoria.Id = _memorias.Any() ? _memorias.Max(t => t.Id) + 1 : 1;
-            _memorias.Add(memoria);
-            return CreatedAtAction(nameof(GetById), new { id = memoria.Id }, memoria);
+            var id = await _memoriaCommands.CreateAsync(memoria);
+            var memoriaCreated = await _memoriaQueries.GetByIdAsync(id);
+            return CreatedAtAction(nameof(GetById), new { id }, memoriaCreated);
         }
 
         /// <summary>
         /// Atualiza uma memória existente
         /// </summary>
         [HttpPut("{id}")]
-        public ActionResult<Memoria> Update(int id, [FromBody] Memoria memoriaAtualizada)
+        public async Task<ActionResult> Update(int id, [FromBody] Memoria memoriaAtualizada)
         {
-            var memoria = _memorias.FirstOrDefault(t => t.Id == id);
-            if (memoria == null)
+            var memoriaExistente = await _memoriaQueries.GetByIdAsync(id);
+            if (memoriaExistente == null)
             {
                 return NotFound(new { message = "Memória não encontrada" });
             }
 
-            memoria.TemaId = memoriaAtualizada.TemaId;
-            memoria.TemplateId = memoriaAtualizada.TemplateId;
-            memoria.ClienteId = memoriaAtualizada.ClienteId;
+            memoriaAtualizada.Id = id;
+            await _memoriaCommands.UpdateAsync(memoriaAtualizada);
 
-            return Ok(memoria);
+            var memoriaAtualiz = await _memoriaQueries.GetByIdAsync(id);
+            return Ok(memoriaAtualiz);
         }
 
         /// <summary>
         /// Exclui uma memória
         /// </summary>
         [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var memoria = _memorias.FirstOrDefault(t => t.Id == id);
+            var memoria = await _memoriaQueries.GetByIdAsync(id);
             if (memoria == null)
             {
                 return NotFound(new { message = "Memória não encontrada" });
             }
 
-            _memorias.Remove(memoria);
+            await _memoriaCommands.DeleteAsync(id);
             return NoContent();
         }
 
@@ -106,9 +93,9 @@ namespace GuardiaoDasMemorias.Controllers
         /// Obtém todas as memórias de um cliente específico
         /// </summary>
         [HttpGet("cliente/{clienteId}")]
-        public ActionResult<IEnumerable<Memoria>> GetByCliente(int clienteId)
+        public async Task<ActionResult> GetByCliente(int clienteId)
         {
-            var memorias = _memorias.Where(t => t.ClienteId == clienteId);
+            var memorias = await _memoriaQueries.GetByClienteIdAsync(clienteId);
             return Ok(memorias);
         }
 
@@ -116,9 +103,9 @@ namespace GuardiaoDasMemorias.Controllers
         /// Obtém todas as memórias de um tema específico
         /// </summary>
         [HttpGet("tema/{temaId}")]
-        public ActionResult<IEnumerable<Memoria>> GetByTema(int temaId)
+        public async Task<ActionResult> GetByTema(int temaId)
         {
-            var memorias = _memorias.Where(t => t.TemaId == temaId);
+            var memorias = await _memoriaQueries.GetByTemaIdAsync(temaId);
             return Ok(memorias);
         }
     }

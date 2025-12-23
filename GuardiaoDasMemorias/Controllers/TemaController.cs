@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using GuardiaoDasMemorias.Entities;
+using GuardiaoDasMemorias.Repository.Queries.Tema;
+using GuardiaoDasMemorias.Repository.Commands.Tema;
 
 namespace GuardiaoDasMemorias.Controllers
 {
@@ -8,46 +10,32 @@ namespace GuardiaoDasMemorias.Controllers
     [ApiController]
     public class TemaController : ControllerBase
     {
-        private static readonly List<Tema> _temas = new()
+        private readonly ITemaQueries _temaQueries;
+        private readonly ITemaCommands _temaCommands;
+
+        public TemaController(ITemaQueries temaQueries, ITemaCommands temaCommands)
         {
-            new Tema
-            {
-                Id = 1,
-                Nome = "Romântico"
-            },
-            new Tema
-            {
-                Id = 2,
-                Nome = "Infantil"
-            },
-            new Tema
-            {
-                Id = 3,
-                Nome = "Corporativo"
-            },
-            new Tema
-            {
-                Id = 4,
-                Nome = "Festivo"
-            }
-        };
+            _temaQueries = temaQueries;
+            _temaCommands = temaCommands;
+        }
 
         /// <summary>
         /// Obtém todos os temas
         /// </summary>
         [HttpGet]
-        public ActionResult<IEnumerable<Tema>> GetAll()
+        public async Task<ActionResult> GetAll()
         {
-            return Ok(_temas);
+            var temas = await _temaQueries.GetAllAsync();
+            return Ok(temas);
         }
 
         /// <summary>
         /// Obtém um tema específico por ID
         /// </summary>
         [HttpGet("{id}")]
-        public ActionResult<Tema> GetById(int id)
+        public async Task<ActionResult> GetById(int id)
         {
-            var tema = _temas.FirstOrDefault(t => t.Id == id);
+            var tema = await _temaQueries.GetByIdAsync(id);
             if (tema == null)
             {
                 return NotFound(new { message = "Tema não encontrado" });
@@ -59,43 +47,45 @@ namespace GuardiaoDasMemorias.Controllers
         /// Cria um novo tema
         /// </summary>
         [HttpPost]
-        public ActionResult<Tema> Create([FromBody] Tema tema)
+        public async Task<ActionResult> Create([FromBody] Tema tema)
         {
-            tema.Id = _temas.Any() ? _temas.Max(t => t.Id) + 1 : 1;
-            _temas.Add(tema);
-            return CreatedAtAction(nameof(GetById), new { id = tema.Id }, tema);
+            var id = await _temaCommands.CreateAsync(tema);
+            var temaCreated = await _temaQueries.GetByIdAsync(id);
+            return CreatedAtAction(nameof(GetById), new { id }, temaCreated);
         }
 
         /// <summary>
         /// Atualiza um tema existente
         /// </summary>
         [HttpPut("{id}")]
-        public ActionResult<Tema> Update(int id, [FromBody] Tema temaAtualizado)
+        public async Task<ActionResult> Update(int id, [FromBody] Tema temaAtualizado)
         {
-            var tema = _temas.FirstOrDefault(t => t.Id == id);
-            if (tema == null)
+            var temaExistente = await _temaQueries.GetByIdAsync(id);
+            if (temaExistente == null)
             {
                 return NotFound(new { message = "Tema não encontrado" });
             }
 
-            tema.Nome = temaAtualizado.Nome;
+            temaAtualizado.Id = id;
+            await _temaCommands.UpdateAsync(temaAtualizado);
 
-            return Ok(tema);
+            var temaAtualiz = await _temaQueries.GetByIdAsync(id);
+            return Ok(temaAtualiz);
         }
 
         /// <summary>
         /// Exclui um tema
         /// </summary>
         [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var tema = _temas.FirstOrDefault(t => t.Id == id);
+            var tema = await _temaQueries.GetByIdAsync(id);
             if (tema == null)
             {
                 return NotFound(new { message = "Tema não encontrado" });
             }
 
-            _temas.Remove(tema);
+            await _temaCommands.DeleteAsync(id);
             return NoContent();
         }
     }
