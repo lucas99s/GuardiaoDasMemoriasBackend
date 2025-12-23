@@ -1,4 +1,3 @@
-Ôªøusing Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using GuardiaoDasMemorias.Entities;
 
@@ -13,28 +12,35 @@ namespace GuardiaoDasMemorias.Controllers
             new Template
             {
                 Id = 1,
-                TemaId = 1,
-                TemplateId = 101,
-                ClienteId = 1
+                Nome = "Template Rom‚ntico Cl·ssico",
+                Ativo = true,
+                TemaId = 1
             },
             new Template
             {
                 Id = 2,
-                TemaId = 2,
-                TemplateId = 102,
-                ClienteId = 1
+                Nome = "Template Infantil Alegre",
+                Ativo = true,
+                TemaId = 2
             },
             new Template
             {
                 Id = 3,
-                TemaId = 3,
-                TemplateId = 103,
-                ClienteId = 2
+                Nome = "Template Corporativo Profissional",
+                Ativo = true,
+                TemaId = 3
+            },
+            new Template
+            {
+                Id = 4,
+                Nome = "Template Festivo Colorido",
+                Ativo = true,
+                TemaId = 4
             }
         };
 
         /// <summary>
-        /// Obt√©m todos os templates
+        /// ObtÈm todos os templates
         /// </summary>
         [HttpGet]
         public ActionResult<IEnumerable<Template>> GetAll()
@@ -43,7 +49,7 @@ namespace GuardiaoDasMemorias.Controllers
         }
 
         /// <summary>
-        /// Obt√©m um template espec√≠fico por ID
+        /// ObtÈm um template especÌfico por ID
         /// </summary>
         [HttpGet("{id}")]
         public ActionResult<Template> GetById(int id)
@@ -51,7 +57,7 @@ namespace GuardiaoDasMemorias.Controllers
             var template = _templates.FirstOrDefault(t => t.Id == id);
             if (template == null)
             {
-                return NotFound(new { message = "Template n√£o encontrado" });
+                return NotFound(new { message = "Template n„o encontrado" });
             }
             return Ok(template);
         }
@@ -76,12 +82,12 @@ namespace GuardiaoDasMemorias.Controllers
             var template = _templates.FirstOrDefault(t => t.Id == id);
             if (template == null)
             {
-                return NotFound(new { message = "Template n√£o encontrado" });
+                return NotFound(new { message = "Template n„o encontrado" });
             }
 
+            template.Nome = templateAtualizado.Nome;
+            template.Ativo = templateAtualizado.Ativo;
             template.TemaId = templateAtualizado.TemaId;
-            template.TemplateId = templateAtualizado.TemplateId;
-            template.ClienteId = templateAtualizado.ClienteId;
 
             return Ok(template);
         }
@@ -95,7 +101,7 @@ namespace GuardiaoDasMemorias.Controllers
             var template = _templates.FirstOrDefault(t => t.Id == id);
             if (template == null)
             {
-                return NotFound(new { message = "Template n√£o encontrado" });
+                return NotFound(new { message = "Template n„o encontrado" });
             }
 
             _templates.Remove(template);
@@ -103,23 +109,39 @@ namespace GuardiaoDasMemorias.Controllers
         }
 
         /// <summary>
-        /// Obt√©m todos os templates de um cliente espec√≠fico
-        /// </summary>
-        [HttpGet("cliente/{clienteId}")]
-        public ActionResult<IEnumerable<Template>> GetByCliente(int clienteId)
-        {
-            var templates = _templates.Where(t => t.ClienteId == clienteId);
-            return Ok(templates);
-        }
-
-        /// <summary>
-        /// Obt√©m todos os templates de um tema espec√≠fico
+        /// ObtÈm todos os templates de um tema especÌfico
         /// </summary>
         [HttpGet("tema/{temaId}")]
         public ActionResult<IEnumerable<Template>> GetByTema(int temaId)
         {
             var templates = _templates.Where(t => t.TemaId == temaId);
             return Ok(templates);
+        }
+
+        /// <summary>
+        /// ObtÈm apenas templates ativos
+        /// </summary>
+        [HttpGet("ativos")]
+        public ActionResult<IEnumerable<Template>> GetAtivos()
+        {
+            var templates = _templates.Where(t => t.Ativo);
+            return Ok(templates);
+        }
+
+        /// <summary>
+        /// Ativa ou desativa um template
+        /// </summary>
+        [HttpPatch("{id}/toggle-ativo")]
+        public ActionResult<Template> ToggleAtivo(int id)
+        {
+            var template = _templates.FirstOrDefault(t => t.Id == id);
+            if (template == null)
+            {
+                return NotFound(new { message = "Template n„o encontrado" });
+            }
+
+            template.Ativo = !template.Ativo;
+            return Ok(template);
         }
     }
 }

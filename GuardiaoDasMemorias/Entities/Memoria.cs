@@ -1,10 +1,10 @@
 ﻿namespace GuardiaoDasMemorias.Entities
 {
-    public class Template
+    public class Memoria
     {
         public int Id { get; set; }
-        public required string Nome { get; set; }
-        public bool Ativo { get; set; }
         public int TemaId { get; set; }
+        public int TemplateId { get; set; }
+        public int ClienteId { get; set; }
     }
 }
