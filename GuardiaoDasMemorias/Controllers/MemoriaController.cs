@@ -32,10 +32,24 @@ namespace GuardiaoDasMemorias.Controllers
         /// <summary>
         /// Obtém uma memória específica por ID
         /// </summary>
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<ActionResult> GetById(int id)
         {
             var memoria = await _memoriaQueries.GetByIdAsync(id);
+            if (memoria == null)
+            {
+                return NotFound(new { message = "Memória não encontrada" });
+            }
+            return Ok(memoria);
+        }
+
+        /// <summary>
+        /// Obtém uma memória específica por hash único
+        /// </summary>
+        [HttpGet("hash/{hash}")]
+        public async Task<ActionResult> GetByHash(string hash)
+        {
+            var memoria = await _memoriaQueries.GetByHashAsync(hash);
             if (memoria == null)
             {
                 return NotFound(new { message = "Memória não encontrada" });

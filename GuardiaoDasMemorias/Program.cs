@@ -10,6 +10,7 @@ using GuardiaoDasMemorias.Repository.Queries.Musica;
 using GuardiaoDasMemorias.Repository.Commands.Musica;
 using GuardiaoDasMemorias.Repository.Queries.Template;
 using GuardiaoDasMemorias.Repository.Commands.Template;
+using GuardiaoDasMemorias.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,9 @@ builder.Services.AddEndpointsApiExplorer();
 // Configurar Entity Framework com PostgreSQL (apenas para migrations)
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Registrar serviços
+builder.Services.AddScoped<IHashService, HashService>();
 
 // Registrar repositórios Dapper
 builder.Services.AddScoped<IClienteQueries, ClienteQueries>();
@@ -43,15 +47,20 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// Configure CORS
+// Configure CORS - Permite requisições do frontend em desenvolvimento
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        builder =>
+    options.AddPolicy("AllowFrontend",
+        policy =>
         {
-            builder.AllowAnyOrigin()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
+            policy.WithOrigins(
+                    "http://localhost:5173",   // Vite dev server
+                    "http://localhost:3000",   // React/Next.js alternativo
+                    "http://localhost:4200",   // Angular alternativo
+                    "http://localhost:5174"    // Vite porta alternativa
+                )
+                .AllowAnyMethod()
+                .AllowAnyHeader();
         });
 });
 
@@ -68,9 +77,10 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+// IMPORTANTE: UseCors DEVE vir ANTES de UseHttpsRedirection e UseAuthorization
+app.UseCors("AllowFrontend");
 
-app.UseCors("AllowAll");
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

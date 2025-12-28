@@ -6,7 +6,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Musica
     {
         Task<IEnumerable<MusicaDto>> GetAllAsync();
         Task<MusicaDto?> GetByIdAsync(int id);
-        Task<IEnumerable<MusicaDto>> GetByClienteIdAsync(int clienteId);
+        Task<IEnumerable<MusicaDto>> GetByMemoriaHashAsync(string memoriaId);
         Task<IEnumerable<MusicaDto>> GetByNomeAsync(string nome);
     }
 }

@@ -6,5 +6,6 @@
         public int TemaId { get; set; }
         public int TemplateId { get; set; }
         public int ClienteId { get; set; }
+        public required string MemoriaHash { get; set; }
     }
 }

@@ -18,8 +18,8 @@ namespace GuardiaoDasMemorias.Repository.Commands.Musica
             using var connection = new NpgsqlConnection(_connectionString);
             
             var sql = @"
-                INSERT INTO musica.musicas (nome, caminho, cliente_id)
-                VALUES (@Nome, @Caminho, @ClienteId)
+                INSERT INTO musica.musicas (nome, caminho, memoria_id)
+                VALUES (@Nome, @Caminho, @MemoriaId)
                 RETURNING id";
 
             return await connection.ExecuteScalarAsync<int>(sql, musica);
@@ -33,7 +33,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Musica
                 UPDATE musica.musicas
                 SET nome = @Nome,
                     caminho = @Caminho,
-                    cliente_id = @ClienteId
+                    memoria_id = @MemoriaId
                 WHERE id = @Id";
 
             var rowsAffected = await connection.ExecuteAsync(sql, musica);

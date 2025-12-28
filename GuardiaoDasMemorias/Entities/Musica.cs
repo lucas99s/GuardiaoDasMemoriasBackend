@@ -5,6 +5,6 @@
         public int Id { get; set; }
         public string Nome { get; set; }
         public string Caminho { get; set; }
-        public int ClienteId { get; set; }
+        public int MemoriaId { get; set; }
     }
 }

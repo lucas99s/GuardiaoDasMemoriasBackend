@@ -70,14 +70,14 @@ public class AppDbContext : DbContext
                 .HasColumnName("caminho")
                 .IsRequired()
                 .HasMaxLength(500);
-            entity.Property(e => e.ClienteId)
-                .HasColumnName("cliente_id")
+            entity.Property(e => e.MemoriaId)
+                .HasColumnName("memoria_id")
                 .IsRequired();
 
-            // Relacionamento com Cliente
-            entity.HasOne<Cliente>()
+            // Relacionamento com Memoria
+            entity.HasOne<Memoria>()
                 .WithMany()
-                .HasForeignKey(e => e.ClienteId)
+                .HasForeignKey(e => e.MemoriaId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -124,6 +124,9 @@ public class AppDbContext : DbContext
                 .IsRequired();
             entity.Property(e => e.ClienteId)
                 .HasColumnName("cliente_id")
+                .IsRequired();
+            entity.Property(e => e.MemoriaHash)
+                .HasColumnName("memoria_hash")
                 .IsRequired();
 
             // Relacionamento com Tema

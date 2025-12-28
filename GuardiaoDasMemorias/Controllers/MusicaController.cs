@@ -90,12 +90,12 @@ namespace GuardiaoDasMemorias.Controllers
         }
 
         /// <summary>
-        /// Obtém todas as músicas de um cliente específico
+        /// Obtém todas as músicas de uma memória específica
         /// </summary>
-        [HttpGet("cliente/{clienteId}")]
-        public async Task<ActionResult> GetByCliente(int clienteId)
+        [HttpGet("memoria/{memoriaHash}")]
+        public async Task<ActionResult> GetByMemoria(string memoriaHash)
         {
-            var musicas = await _musicaQueries.GetByClienteIdAsync(clienteId);
+            var musicas = await _musicaQueries.GetByMemoriaHashAsync(memoriaHash);
             return Ok(musicas);
         }
 

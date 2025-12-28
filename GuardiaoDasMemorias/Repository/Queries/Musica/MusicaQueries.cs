@@ -20,14 +20,12 @@ namespace GuardiaoDasMemorias.Repository.Queries.Musica
             
             var sql = @"
                 SELECT 
-                    m.id AS ""Id"",
-                    m.nome AS ""Nome"",
-                    m.caminho AS ""Caminho"",
-                    m.cliente_id AS ""ClienteId"",
-                    c.nome AS ""ClienteNome""
-                FROM musica.musicas m
-                LEFT JOIN cliente.clientes c ON m.cliente_id = c.id
-                ORDER BY m.nome";
+                    id AS ""Id"",
+                    nome AS ""Nome"",
+                    caminho AS ""Caminho"",
+                    memoria_id AS ""MemoriaId""
+                FROM musica.musicas
+                ORDER BY nome";
 
             return await connection.QueryAsync<MusicaDto>(sql);
         }
@@ -38,35 +36,32 @@ namespace GuardiaoDasMemorias.Repository.Queries.Musica
             
             var sql = @"
                 SELECT 
-                    m.id AS ""Id"",
-                    m.nome AS ""Nome"",
-                    m.caminho AS ""Caminho"",
-                    m.cliente_id AS ""ClienteId"",
-                    c.nome AS ""ClienteNome""
-                FROM musica.musicas m
-                LEFT JOIN cliente.clientes c ON m.cliente_id = c.id
-                WHERE m.id = @Id";
+                    id AS ""Id"",
+                    nome AS ""Nome"",
+                    caminho AS ""Caminho"",
+                    memoria_id AS ""MemoriaId""
+                FROM musica.musicas
+                WHERE id = @Id";
 
             return await connection.QueryFirstOrDefaultAsync<MusicaDto>(sql, new { Id = id });
         }
 
-        public async Task<IEnumerable<MusicaDto>> GetByClienteIdAsync(int clienteId)
+        public async Task<IEnumerable<MusicaDto>> GetByMemoriaHashAsync(string memoriaHash)
         {
             using var connection = new NpgsqlConnection(_connectionString);
             
             var sql = @"
                 SELECT 
-                    m.id AS ""Id"",
-                    m.nome AS ""Nome"",
-                    m.caminho AS ""Caminho"",
-                    m.cliente_id AS ""ClienteId"",
-                    c.nome AS ""ClienteNome""
-                FROM musica.musicas m
-                LEFT JOIN cliente.clientes c ON m.cliente_id = c.id
-                WHERE m.cliente_id = @ClienteId
-                ORDER BY m.nome";
+                    A.id AS ""Id"",
+                    A.nome AS ""Nome"",
+                    A.caminho AS ""Caminho"",
+                    A.memoria_id AS ""MemoriaId""
+                FROM musica.musicas A
+                INNER JOIN memoria.memorias B ON A.memoria_id = B.id
+                WHERE B.memoria_hash = @MemoriaHash
+                ORDER BY A.nome";
 
-            return await connection.QueryAsync<MusicaDto>(sql, new { ClienteId = clienteId });
+            return await connection.QueryAsync<MusicaDto>(sql, new { MemoriaHash = memoriaHash });
         }
 
         public async Task<IEnumerable<MusicaDto>> GetByNomeAsync(string nome)
@@ -75,15 +70,13 @@ namespace GuardiaoDasMemorias.Repository.Queries.Musica
             
             var sql = @"
                 SELECT 
-                    m.id AS ""Id"",
-                    m.nome AS ""Nome"",
-                    m.caminho AS ""Caminho"",
-                    m.cliente_id AS ""ClienteId"",
-                    c.nome AS ""ClienteNome""
-                FROM musica.musicas m
-                LEFT JOIN cliente.clientes c ON m.cliente_id = c.id
-                WHERE m.nome ILIKE @Nome
-                ORDER BY m.nome";
+                    id AS ""Id"",
+                    nome AS ""Nome"",
+                    caminho AS ""Caminho"",
+                    memoria_id AS ""MemoriaId""
+                FROM musica.musicas
+                WHERE nome ILIKE @Nome
+                ORDER BY nome";
 
             return await connection.QueryAsync<MusicaDto>(sql, new { Nome = $"%{nome}%" });
         }
