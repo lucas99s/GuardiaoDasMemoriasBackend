@@ -3,15 +3,9 @@ nixPkgs = ['dotnet-sdk_9']
 
 [phases.build]
 cmds = [
-    'dotnet restore',
-    'dotnet build --configuration Release --no-restore'
-]
-
-[phases.deploy]
-cmds = [
-    'cd GuardiaoDasMemorias',
-    'dotnet GuardiaoDasMemorias.dll'
+    'dotnet restore GuardiaoDasMemorias.sln',
+    'dotnet publish GuardiaoDasMemorias/GuardiaoDasMemorias.csproj -c Release -o out'
 ]
 
 [start]
-cmd = 'cd GuardiaoDasMemorias && dotnet GuardiaoDasMemorias.dll'
+cmd = 'cd out && dotnet GuardiaoDasMemorias.dll'
