@@ -57,7 +57,8 @@ builder.Services.AddCors(options =>
                     "http://localhost:5173",   // Vite dev server
                     "http://localhost:3000",   // React/Next.js alternativo
                     "http://localhost:4200",   // Angular alternativo
-                    "http://localhost:5174"    // Vite porta alternativa
+                    "http://localhost:5174",   // Vite porta alternativa
+                    "https://guardiaodasmemorias.up.railway.app"  // Produção Railway
                 )
                 .AllowAnyMethod()
                 .AllowAnyHeader();
