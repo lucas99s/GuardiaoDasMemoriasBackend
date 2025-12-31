@@ -53,15 +53,27 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins(
-                    "http://localhost:5173",   // Vite dev server
-                    "http://localhost:3000",   // React/Next.js alternativo
-                    "http://localhost:4200",   // Angular alternativo
-                    "http://localhost:5174",   // Vite porta alternativa
-                    "https://guardiaodasmemorias.up.railway.app"  // Produção Railway
-                )
+            var allowedOrigins = new List<string>
+            {
+                "http://localhost:5173",
+                "http://localhost:3000",
+                "http://localhost:4200",
+                "http://localhost:5174",
+                "https://guardiaodasmemorias.up.railway.app",
+                "https://guardiaodasmemoriasbackend-production.up.railway.app"
+            };
+
+            // Adicionar origem do ambiente se configurada
+            var frontendUrl = builder.Configuration["FRONTEND_URL"];
+            if (!string.IsNullOrEmpty(frontendUrl))
+            {
+                allowedOrigins.Add(frontendUrl);
+            }
+
+            policy.WithOrigins(allowedOrigins.ToArray())
                 .AllowAnyMethod()
-                .AllowAnyHeader();
+                .AllowAnyHeader()
+                .AllowCredentials();
         });
 });
 
