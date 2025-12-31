@@ -1,0 +1,17 @@
+[phases.setup]
+nixPkgs = ['dotnet-sdk_9']
+
+[phases.build]
+cmds = [
+    'dotnet restore',
+    'dotnet build --configuration Release --no-restore'
+]
+
+[phases.deploy]
+cmds = [
+    'cd GuardiaoDasMemorias',
+    'dotnet GuardiaoDasMemorias.dll'
+]
+
+[start]
+cmd = 'cd GuardiaoDasMemorias && dotnet GuardiaoDasMemorias.dll'
