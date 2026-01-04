@@ -9,6 +9,7 @@ namespace GuardiaoDasMemorias.DTOs.Memoria
         public string? TemaNome { get; set; }
         public string? TemplateName { get; set; }
         public string? ClienteNome { get; set; }
+        public string? Telefone { get; set; }
         public string? MemoriaHash { get; set; }
     }
 }

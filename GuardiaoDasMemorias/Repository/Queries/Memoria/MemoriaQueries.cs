@@ -27,7 +27,8 @@ namespace GuardiaoDasMemorias.Repository.Queries.Memoria
                     m.memoria_hash AS ""MemoriaHash"",
                     t.nome AS ""TemaNome"",
                     tp.nome AS ""TemplateName"",
-                    c.nome AS ""ClienteNome""
+                    c.nome AS ""ClienteNome"",
+                    c.telefone AS ""Telefone""
                 FROM memoria.memorias m
                 LEFT JOIN tema.temas t ON m.tema_id = t.id
                 LEFT JOIN template.templates tp ON m.template_id = tp.id

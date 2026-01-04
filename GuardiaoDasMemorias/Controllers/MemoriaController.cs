@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using GuardiaoDasMemorias.Entities;
+using GuardiaoDasMemorias.DTOs.Memoria;
 using GuardiaoDasMemorias.Repository.Queries.Memoria;
 using GuardiaoDasMemorias.Repository.Commands.Memoria;
 
@@ -61,8 +62,16 @@ namespace GuardiaoDasMemorias.Controllers
         /// Cria uma nova memória
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] Memoria memoria)
+        public async Task<ActionResult> Create([FromBody] MemoriaDto memoriaDto)
         {
+            var memoria = new Memoria
+            {
+                TemaId = memoriaDto.TemaId,
+                TemplateId = memoriaDto.TemplateId,
+                ClienteId = memoriaDto.ClienteId,
+                MemoriaHash = memoriaDto.MemoriaHash ?? string.Empty
+            };
+
             var id = await _memoriaCommands.CreateAsync(memoria);
             var memoriaCreated = await _memoriaQueries.GetByIdAsync(id);
             return CreatedAtAction(nameof(GetById), new { id }, memoriaCreated);
@@ -72,7 +81,7 @@ namespace GuardiaoDasMemorias.Controllers
         /// Atualiza uma memória existente
         /// </summary>
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, [FromBody] Memoria memoriaAtualizada)
+        public async Task<ActionResult> Update(int id, [FromBody] MemoriaDto memoriaDto)
         {
             var memoriaExistente = await _memoriaQueries.GetByIdAsync(id);
             if (memoriaExistente == null)
@@ -80,7 +89,15 @@ namespace GuardiaoDasMemorias.Controllers
                 return NotFound(new { message = "Memória não encontrada" });
             }
 
-            memoriaAtualizada.Id = id;
+            var memoriaAtualizada = new Memoria
+            {
+                Id = id,
+                TemaId = memoriaDto.TemaId,
+                TemplateId = memoriaDto.TemplateId,
+                ClienteId = memoriaDto.ClienteId,
+                MemoriaHash = memoriaDto.MemoriaHash ?? string.Empty
+            };
+
             await _memoriaCommands.UpdateAsync(memoriaAtualizada);
 
             var memoriaAtualiz = await _memoriaQueries.GetByIdAsync(id);
