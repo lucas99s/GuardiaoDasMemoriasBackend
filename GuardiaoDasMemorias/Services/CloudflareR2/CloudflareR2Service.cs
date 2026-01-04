@@ -1,4 +1,4 @@
-using Amazon.S3;
+Ôªøusing Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.Runtime;
 using Microsoft.Extensions.Options;
@@ -28,7 +28,7 @@ namespace GuardiaoDasMemorias.Services.CloudflareR2
 
             if (!_isConfigured)
             {
-                _logger.LogWarning("?? Cloudflare R2 n„o configurado");
+                _logger.LogWarning("‚ö†Ô∏è Cloudflare R2 n√£o configurado");
             }
         }
 
@@ -45,7 +45,7 @@ namespace GuardiaoDasMemorias.Services.CloudflareR2
                 if (!_isConfigured)
                 {
                     throw new InvalidOperationException(
-                        "Cloudflare R2 n„o est· configurado. " +
+                        "Cloudflare R2 n√£o est√° configurado. " +
                         "Configure AccountId, AccessKeyId, SecretAccessKey e BucketName no appsettings.json");
                 }
 
@@ -60,7 +60,7 @@ namespace GuardiaoDasMemorias.Services.CloudflareR2
 
                     _s3Client = new AmazonS3Client(credentials, s3Config);
                     _clientInitialized = true;
-                    _logger.LogInformation("? Cloudflare R2 configurado com sucesso");
+                    _logger.LogInformation("‚úÖ Cloudflare R2 configurado com sucesso");
                 }
                 catch (Exception ex)
                 {
@@ -71,20 +71,23 @@ namespace GuardiaoDasMemorias.Services.CloudflareR2
             }
         }
 
-        public async Task<string> UploadFileAsync(Stream stream, string fileName, string contentType)
+        public async Task<string> UploadFileAsync(Stream stream, string fileName, string hash, string contentType)
         {
             EnsureClientInitialized();
 
             if (_s3Client == null)
             {
-                throw new InvalidOperationException("Cliente R2 n„o inicializado");
+                throw new InvalidOperationException("Cliente R2 n√£o inicializado");
             }
 
             try
             {
                 var uniqueFileName = $"{Guid.NewGuid()}_{fileName}";
+                
+                // Definir o caminho completo no bucket (sem / no in√≠cio)
+                var s3Key = $"music/{hash}/{uniqueFileName}";
 
-                // Carregar stream completo na memÛria (necess·rio para compatibilidade com R2)
+                // Carregar stream completo na mem√≥ria (necess√°rio para compatibilidade com R2)
                 using var memoryStream = new MemoryStream();
                 await stream.CopyToAsync(memoryStream);
                 memoryStream.Position = 0;
@@ -92,7 +95,7 @@ namespace GuardiaoDasMemorias.Services.CloudflareR2
                 var putRequest = new PutObjectRequest
                 {
                     BucketName = _config.BucketName,
-                    Key = uniqueFileName,
+                    Key = s3Key,  // Sem / no in√≠cio
                     InputStream = memoryStream,
                     ContentType = contentType,
                     CannedACL = S3CannedACL.PublicRead,
@@ -103,11 +106,10 @@ namespace GuardiaoDasMemorias.Services.CloudflareR2
 
                 if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    var fileUrl = string.IsNullOrEmpty(_config.PublicUrl)
-                        ? $"https://{_config.AccountId}.r2.cloudflarestorage.com/{_config.BucketName}/{uniqueFileName}"
-                        : $"{_config.PublicUrl}/{uniqueFileName}";
+                    // Construir URL p√∫blica
+                    var fileUrl = $"{_config.PublicUrl}/{s3Key}";
 
-                    _logger.LogInformation($"? Upload concluÌdo: {fileName}");
+                    _logger.LogInformation($"‚úÖ Upload conclu√≠do: {fileName} -> {s3Key}");
                     return fileUrl;
                 }
 
@@ -124,7 +126,7 @@ namespace GuardiaoDasMemorias.Services.CloudflareR2
         {
             if (!_isConfigured)
             {
-                _logger.LogWarning("R2 n„o configurado, arquivo n„o ser· deletado");
+                _logger.LogWarning("R2 n√£o configurado, arquivo n√£o ser√° deletado");
                 return;
             }
 
@@ -135,16 +137,18 @@ namespace GuardiaoDasMemorias.Services.CloudflareR2
 
             try
             {
-                var fileName = fileUrl.Split('/').Last();
+                // Extrair o caminho completo da URL (ex: music/hash/arquivo.mp3)
+                var uri = new Uri(fileUrl);
+                var s3Key = uri.AbsolutePath.TrimStart('/');
 
                 var deleteRequest = new DeleteObjectRequest
                 {
                     BucketName = _config.BucketName,
-                    Key = fileName
+                    Key = s3Key
                 };
 
                 await _s3Client.DeleteObjectAsync(deleteRequest);
-                _logger.LogInformation($"? Arquivo deletado: {fileName}");
+                _logger.LogInformation($"‚úÖ Arquivo deletado: {s3Key}");
             }
             catch (Exception ex)
             {

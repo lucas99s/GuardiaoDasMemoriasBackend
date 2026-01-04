@@ -84,7 +84,7 @@ namespace GuardiaoDasMemorias.Controllers
         /// </summary>
         [HttpPost("upload")]
         [Consumes("multipart/form-data")]
-        public async Task<ActionResult> UploadMusica(IFormFile arquivo, string nome, int memoriaId)
+        public async Task<ActionResult> UploadMusica(IFormFile arquivo, string nome, int memoriaId, string hash)
         {
             if (arquivo == null || arquivo.Length == 0)
             {
@@ -109,7 +109,7 @@ namespace GuardiaoDasMemorias.Controllers
             {
                 // Fazer upload para R2
                 using var stream = arquivo.OpenReadStream();
-                var fileUrl = await _r2Service.UploadFileAsync(stream, arquivo.FileName, arquivo.ContentType);
+                var fileUrl = await _r2Service.UploadFileAsync(stream, arquivo.FileName, hash, arquivo.ContentType);
 
                 // Salvar registro no banco de dados
                 var musica = new Musica

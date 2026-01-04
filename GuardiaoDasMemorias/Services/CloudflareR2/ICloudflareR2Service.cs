@@ -9,7 +9,7 @@ namespace GuardiaoDasMemorias.Services.CloudflareR2
         /// <param name="fileName">Nome do arquivo</param>
         /// <param name="contentType">Tipo de conteúdo (ex: audio/mpeg)</param>
         /// <returns>URL pública do arquivo</returns>
-        Task<string> UploadFileAsync(Stream stream, string fileName, string contentType);
+        Task<string> UploadFileAsync(Stream stream, string fileName, string hash, string contentType);
 
         /// <summary>
         /// Deleta um arquivo do Cloudflare R2
