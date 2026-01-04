@@ -11,6 +11,7 @@ using GuardiaoDasMemorias.Repository.Commands.Musica;
 using GuardiaoDasMemorias.Repository.Queries.Template;
 using GuardiaoDasMemorias.Repository.Commands.Template;
 using GuardiaoDasMemorias.Services;
+using GuardiaoDasMemorias.Services.CloudflareR2;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,11 @@ builder.Services.AddEndpointsApiExplorer();
 // Configurar Entity Framework com PostgreSQL (apenas para migrations)
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Configurar Cloudflare R2
+builder.Services.Configure<CloudflareR2Config>(
+    builder.Configuration.GetSection("CloudflareR2"));
+builder.Services.AddScoped<ICloudflareR2Service, CloudflareR2Service>();
 
 // Registrar serviços
 builder.Services.AddScoped<IHashService, HashService>();
