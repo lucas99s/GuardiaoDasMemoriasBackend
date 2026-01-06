@@ -1,5 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using GuardiaoDasMemorias.Data;
+using GuardiaoDasMemorias.Models;
 using GuardiaoDasMemorias.Repository.Queries.Cliente;
 using GuardiaoDasMemorias.Repository.Commands.Cliente;
 using GuardiaoDasMemorias.Repository.Queries.Memoria;
@@ -19,9 +24,54 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// Configurar Entity Framework com PostgreSQL (apenas para migrations)
+// Configurar Entity Framework com PostgreSQL
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Configurar ASP.NET Core Identity
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+{
+    // Configurações de senha
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 6;
+
+    // Configurações de usuário
+    options.User.RequireUniqueEmail = true;
+    
+    // Configurações de login
+    options.SignIn.RequireConfirmedEmail = false;
+})
+.AddEntityFrameworkStores<AppDbContext>()
+.AddDefaultTokenProviders();
+
+// Configurar JWT Authentication
+var jwtSecret = builder.Configuration["JwtSettings:Secret"] 
+    ?? throw new InvalidOperationException("JWT Secret não configurado");
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+        ValidAudience = builder.Configuration["JwtSettings:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
+builder.Services.AddAuthorization();
 
 // Configurar Cloudflare R2
 builder.Services.Configure<CloudflareR2Config>(
@@ -30,6 +80,7 @@ builder.Services.AddScoped<ICloudflareR2Service, CloudflareR2Service>();
 
 // Registrar serviços
 builder.Services.AddScoped<IHashService, HashService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 // Registrar repositórios Dapper
 builder.Services.AddScoped<IClienteQueries, ClienteQueries>();
@@ -50,6 +101,31 @@ builder.Services.AddSwaggerGen(c =>
         Title = "Guardião das Memórias API",
         Version = "v1",
         Description = "API para gerenciamento de memórias"
+    });
+
+    // Configurar autenticação JWT no Swagger
+    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header usando o esquema Bearer. Exemplo: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
     });
 });
 
@@ -96,11 +172,12 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// IMPORTANTE: UseCors DEVE vir ANTES de UseHttpsRedirection e UseAuthorization
+// IMPORTANTE: A ordem é crítica - UseCors ANTES de UseAuthentication/UseAuthorization
 app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
