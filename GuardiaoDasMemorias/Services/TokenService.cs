@@ -3,12 +3,13 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using GuardiaoDasMemorias.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace GuardiaoDasMemorias.Services;
 
 public interface ITokenService
 {
-    string GenerateToken(ApplicationUser user);
+    string GenerateToken(ApplicationUser user, IList<string> roles);
 }
 
 public class TokenService : ITokenService
@@ -20,7 +21,7 @@ public class TokenService : ITokenService
         _configuration = configuration;
     }
 
-    public string GenerateToken(ApplicationUser user)
+    public string GenerateToken(ApplicationUser user, IList<string> roles)
     {
         var claims = new List<Claim>
         {
@@ -29,6 +30,12 @@ public class TokenService : ITokenService
             new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
+
+        // Adicionar um claim para cada role do usuário
+        foreach (var role in roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
             _configuration["JwtSettings:Secret"] ?? throw new InvalidOperationException("JWT Secret not configured")));

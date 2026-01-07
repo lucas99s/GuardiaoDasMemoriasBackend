@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using GuardiaoDasMemorias.DTOs.Auth;
 using GuardiaoDasMemorias.Models;
 using GuardiaoDasMemorias.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GuardiaoDasMemorias.Controllers;
 
@@ -11,17 +12,20 @@ namespace GuardiaoDasMemorias.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ITokenService _tokenService;
     private readonly ILogger<AuthController> _logger;
 
     public AuthController(
         UserManager<ApplicationUser> userManager,
+        RoleManager<IdentityRole> roleManager,
         SignInManager<ApplicationUser> signInManager,
         ITokenService tokenService,
         ILogger<AuthController> logger)
     {
         _userManager = userManager;
+        _roleManager = roleManager;
         _signInManager = signInManager;
         _tokenService = tokenService;
         _logger = logger;
@@ -59,8 +63,18 @@ public class AuthController : ControllerBase
                 return BadRequest(new { message = "Falha ao criar usuário", errors });
             }
 
+            // Adicionar role "User" ao novo usuário
+            var roleResult = await _userManager.AddToRoleAsync(user, "User");
+            if (!roleResult.Succeeded)
+            {
+                _logger.LogWarning("Falha ao adicionar role 'User' ao usuário {Email}", user.Email);
+            }
+
+            // Obter roles do usuário
+            var roles = await _userManager.GetRolesAsync(user);
+
             // Gerar token JWT
-            var token = _tokenService.GenerateToken(user);
+            var token = _tokenService.GenerateToken(user, roles);
 
             var response = new AuthResponseDto
             {
@@ -94,6 +108,9 @@ public class AuthController : ControllerBase
                 return Unauthorized(new { message = "Email ou senha inválidos" });
             }
 
+            // Obter roles do usuário
+            var roles = await _userManager.GetRolesAsync(user);
+
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, lockoutOnFailure: false);
 
             if (!result.Succeeded)
@@ -102,7 +119,7 @@ public class AuthController : ControllerBase
             }
 
             // Gerar token JWT
-            var token = _tokenService.GenerateToken(user);
+            var token = _tokenService.GenerateToken(user, roles);
 
             var response = new AuthResponseDto
             {
@@ -143,13 +160,17 @@ public class AuthController : ControllerBase
                 return NotFound(new { message = "Usuário não encontrado" });
             }
 
+            // Obter roles atuais do usuário
+            var roles = await _userManager.GetRolesAsync(user);
+
             return Ok(new
             {
                 userId = user.Id,
                 email = user.Email,
                 userName = user.UserName,
                 phoneNumber = user.PhoneNumber,
-                createdAt = user.CreatedAt
+                createdAt = user.CreatedAt,
+                roles = roles
             });
         }
         catch (Exception ex)
@@ -163,7 +184,7 @@ public class AuthController : ControllerBase
     /// Realiza logout do usuário
     /// </summary>
     [HttpPost("logout")]
-    [Microsoft.AspNetCore.Authorization.Authorize]
+    [Authorize]
     public async Task<IActionResult> Logout()
     {
         try
