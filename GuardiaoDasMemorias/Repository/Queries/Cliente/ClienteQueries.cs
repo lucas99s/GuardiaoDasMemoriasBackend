@@ -20,12 +20,14 @@ namespace GuardiaoDasMemorias.Repository.Queries.Cliente
             
             var sql = @"
                 SELECT 
-                    id AS ""Id"",
-                    nome AS ""Nome"",
-                    telefone AS ""Telefone"",
-                    email AS ""Email""
-                FROM cliente.clientes
-                ORDER BY nome";
+                    c.id AS ""Id"",
+                    c.nome AS ""Nome"",
+                    c.telefone AS ""Telefone"",
+                    c.user_id AS ""UserId"",
+                    u.email AS ""Email""
+                FROM cliente.clientes c
+                INNER JOIN auth.users u ON c.user_id = u.id
+                ORDER BY c.nome";
 
             return await connection.QueryAsync<ClienteDto>(sql);
         }
@@ -36,12 +38,14 @@ namespace GuardiaoDasMemorias.Repository.Queries.Cliente
             
             var sql = @"
                 SELECT 
-                    id AS ""Id"",
-                    nome AS ""Nome"",
-                    telefone AS ""Telefone"",
-                    email AS ""Email""
-                FROM cliente.clientes
-                WHERE id = @Id";
+                    c.id AS ""Id"",
+                    c.nome AS ""Nome"",
+                    c.telefone AS ""Telefone"",
+                    c.user_id AS ""UserId"",
+                    u.email AS ""Email""
+                FROM cliente.clientes c
+                INNER JOIN auth.users u ON c.user_id = u.id
+                WHERE c.id = @Id";
 
             return await connection.QueryFirstOrDefaultAsync<ClienteDto>(sql, new { Id = id });
         }
@@ -52,13 +56,15 @@ namespace GuardiaoDasMemorias.Repository.Queries.Cliente
             
             var sql = @"
                 SELECT 
-                    id AS ""Id"",
-                    nome AS ""Nome"",
-                    telefone AS ""Telefone"",
-                    email AS ""Email""
-                FROM cliente.clientes
-                WHERE nome ILIKE @Nome
-                ORDER BY nome";
+                    c.id AS ""Id"",
+                    c.nome AS ""Nome"",
+                    c.telefone AS ""Telefone"",
+                    c.user_id AS ""UserId"",
+                    u.email AS ""Email""
+                FROM cliente.clientes c
+                INNER JOIN auth.users u ON c.user_id = u.id
+                WHERE c.nome ILIKE @Nome
+                ORDER BY c.nome";
 
             return await connection.QueryAsync<ClienteDto>(sql, new { Nome = $"%{nome}%" });
         }

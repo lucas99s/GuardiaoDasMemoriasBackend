@@ -4,6 +4,7 @@ using GuardiaoDasMemorias.Entities;
 using GuardiaoDasMemorias.DTOs.Memoria;
 using GuardiaoDasMemorias.Repository.Queries.Memoria;
 using GuardiaoDasMemorias.Repository.Commands.Memoria;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GuardiaoDasMemorias.Controllers
 {
@@ -24,6 +25,7 @@ namespace GuardiaoDasMemorias.Controllers
         /// Obtém todas as memórias
         /// </summary>
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> GetAll()
         {
             var memorias = await _memoriaQueries.GetAllAsync();
@@ -34,6 +36,7 @@ namespace GuardiaoDasMemorias.Controllers
         /// Obtém uma memória específica por ID
         /// </summary>
         [HttpGet("{id:int}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> GetById(int id)
         {
             var memoria = await _memoriaQueries.GetByIdAsync(id);
@@ -62,6 +65,7 @@ namespace GuardiaoDasMemorias.Controllers
         /// Cria uma nova memória
         /// </summary>
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult> Create([FromBody] MemoriaDto memoriaDto)
         {
             var memoria = new Memoria
@@ -81,6 +85,7 @@ namespace GuardiaoDasMemorias.Controllers
         /// Atualiza uma memória existente
         /// </summary>
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<ActionResult> Update(int id, [FromBody] MemoriaDto memoriaDto)
         {
             var memoriaExistente = await _memoriaQueries.GetByIdAsync(id);
@@ -108,6 +113,7 @@ namespace GuardiaoDasMemorias.Controllers
         /// Exclui uma memória
         /// </summary>
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(int id)
         {
             var memoria = await _memoriaQueries.GetByIdAsync(id);
@@ -124,6 +130,7 @@ namespace GuardiaoDasMemorias.Controllers
         /// Obtém todas as memórias de um cliente específico
         /// </summary>
         [HttpGet("cliente/{clienteId}")]
+        [Authorize]
         public async Task<ActionResult> GetByCliente(int clienteId)
         {
             var memorias = await _memoriaQueries.GetByClienteIdAsync(clienteId);
@@ -134,6 +141,7 @@ namespace GuardiaoDasMemorias.Controllers
         /// Obtém todas as memórias de um tema específico
         /// </summary>
         [HttpGet("tema/{temaId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> GetByTema(int temaId)
         {
             var memorias = await _memoriaQueries.GetByTemaIdAsync(temaId);

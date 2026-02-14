@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using GuardiaoDasMemorias.Entities;
 using GuardiaoDasMemorias.Repository.Queries.Cliente;
 using GuardiaoDasMemorias.Repository.Commands.Cliente;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GuardiaoDasMemorias.Controllers
 {
@@ -23,6 +24,7 @@ namespace GuardiaoDasMemorias.Controllers
         /// Obtém todos os clientes
         /// </summary>
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> GetAll()
         {
             var clientes = await _clienteQueries.GetAllAsync();

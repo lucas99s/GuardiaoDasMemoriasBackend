@@ -69,13 +69,21 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
                 .HasColumnName("nome")
                 .IsRequired()
                 .HasMaxLength(200);
-            entity.Property(e => e.Email)
-                .HasColumnName("email")
-                .HasMaxLength(200);
             entity.Property(e => e.Telefone)
                 .HasColumnName("telefone")
                 .IsRequired()
                 .HasMaxLength(20);
+            entity.Property(e => e.UserId)
+                .HasColumnName("user_id")
+                .IsRequired();
+
+            // Relacionamento com ApplicationUser
+            entity.HasOne(c => c.User)
+                .WithOne(u => u.Cliente)
+                .HasForeignKey<Entities.Cliente>(c => c.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(e => e.UserId).IsUnique();
         });
 
         // Configuração da entidade Tema
@@ -113,10 +121,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
                 .IsRequired();
 
             // Relacionamento com Memoria
-            entity.HasOne<Entities.Memoria>()
-                .WithMany()
-                .HasForeignKey(e => e.MemoriaId)
-                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(m => m.Memoria)
+                  .WithMany(x => x.Musicas)
+                  .HasForeignKey(m => m.MemoriaId)
+                  .OnDelete(DeleteBehavior.Restrict);
         });
 
         // Configuração da entidade Template
@@ -140,8 +148,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
                 .IsRequired();
 
             // Relacionamento com Tema (FK)
-            entity.HasOne<Entities.Tema>()
-                .WithMany()
+            entity.HasOne(t => t.Tema)
+                .WithMany(te => te.Templates)
                 .HasForeignKey(e => e.TemaId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
@@ -167,21 +175,23 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
                 .HasColumnName("memoria_hash")
                 .IsRequired();
 
+            entity.HasIndex(e => e.MemoriaHash).IsUnique();
+
             // Relacionamento com Tema
-            entity.HasOne<Entities.Tema>()
-                .WithMany()
+            entity.HasOne(t => t.Tema)
+                .WithMany(m => m.Memorias)
                 .HasForeignKey(e => e.TemaId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Relacionamento com Cliente
-            entity.HasOne<Entities.Cliente>()
-                .WithMany()
-                .HasForeignKey(e => e.ClienteId)
-                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(m => m.Cliente)
+               .WithMany(c => c.Memorias)
+               .HasForeignKey(m => m.ClienteId)
+               .OnDelete(DeleteBehavior.Restrict);
 
             // Relacionamento com Template
-            entity.HasOne<Entities.Template>()
-                .WithMany()
+            entity.HasOne(t => t.Template)
+                .WithMany(m => m.Memorias)
                 .HasForeignKey(e => e.TemplateId)
                 .OnDelete(DeleteBehavior.Restrict);
         });

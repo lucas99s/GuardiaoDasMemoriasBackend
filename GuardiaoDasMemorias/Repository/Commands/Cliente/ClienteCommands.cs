@@ -18,8 +18,8 @@ namespace GuardiaoDasMemorias.Repository.Commands.Cliente
             using var connection = new NpgsqlConnection(_connectionString);
             
             var sql = @"
-                INSERT INTO cliente.clientes (nome, telefone, email)
-                VALUES (@Nome, @Telefone, @Email)
+                INSERT INTO cliente.clientes (nome, telefone, user_id)
+                VALUES (@Nome, @Telefone, @UserId)
                 RETURNING id";
 
             return await connection.ExecuteScalarAsync<int>(sql, cliente);
@@ -33,7 +33,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Cliente
                 UPDATE cliente.clientes
                 SET nome = @Nome,
                     telefone = @Telefone,
-                    email = @Email
+                    user_id = @UserId
                 WHERE id = @Id";
 
             var rowsAffected = await connection.ExecuteAsync(sql, cliente);
