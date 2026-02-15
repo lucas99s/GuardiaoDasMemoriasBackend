@@ -1,7 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using GuardiaoDasMemorias.Models;
-using Entities = GuardiaoDasMemorias.Entities;
+using GuardiaoDasMemorias.Entities.Cliente;
+using GuardiaoDasMemorias.Entities.Musica;
+using GuardiaoDasMemorias.Entities.Tema;
+using GuardiaoDasMemorias.Entities.Template;
+using GuardiaoDasMemorias.Entities.Memoria;
 
 namespace GuardiaoDasMemorias.Data;
 
@@ -11,11 +15,11 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     {
     }
 
-    public DbSet<Entities.Cliente> Clientes { get; set; }
-    public DbSet<Entities.Tema> Temas { get; set; }
-    public DbSet<Entities.Musica> Musicas { get; set; }
-    public DbSet<Entities.Memoria> Memorias { get; set; }
-    public DbSet<Entities.Template> Templates { get; set; }
+    public DbSet<Clientes> Clientes { get; set; }
+    public DbSet<Temas> Temas { get; set; }
+    public DbSet<Musicas> Musicas { get; set; }
+    public DbSet<Memorias> Memorias { get; set; }
+    public DbSet<Templates> Templates { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -58,7 +62,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         });
 
         // Configuração da entidade Cliente
-        modelBuilder.Entity<Entities.Cliente>(entity =>
+        modelBuilder.Entity<Clientes>(entity =>
         {
             entity.ToTable("clientes", "cliente");
             entity.HasKey(e => e.Id);
@@ -80,14 +84,14 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
             // Relacionamento com ApplicationUser
             entity.HasOne(c => c.User)
                 .WithOne(u => u.Cliente)
-                .HasForeignKey<Entities.Cliente>(c => c.UserId)
+                .HasForeignKey<Clientes>(c => c.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasIndex(e => e.UserId).IsUnique();
         });
 
         // Configuração da entidade Tema
-        modelBuilder.Entity<Entities.Tema>(entity =>
+        modelBuilder.Entity<Temas>(entity =>
         {
             entity.ToTable("temas", "tema");
             entity.HasKey(e => e.Id);
@@ -101,7 +105,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         });
 
         // Configuração da entidade Musica
-        modelBuilder.Entity<Entities.Musica>(entity =>
+        modelBuilder.Entity<Musicas>(entity =>
         {
             entity.ToTable("musicas", "musica");
             entity.HasKey(e => e.Id);
@@ -128,7 +132,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         });
 
         // Configuração da entidade Template
-        modelBuilder.Entity<Entities.Template>(entity =>
+        modelBuilder.Entity<Templates>(entity =>
         {
             entity.ToTable("templates", "template");
             entity.HasKey(e => e.Id);
@@ -155,7 +159,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         });
 
         // Configuração da entidade Memoria
-        modelBuilder.Entity<Entities.Memoria>(entity =>
+        modelBuilder.Entity<Entities.Memoria.Memorias>(entity =>
         {
             entity.ToTable("memorias", "memoria");
             entity.HasKey(e => e.Id);

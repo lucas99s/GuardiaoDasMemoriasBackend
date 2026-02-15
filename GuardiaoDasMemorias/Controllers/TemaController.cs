@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using GuardiaoDasMemorias.Entities;
 using GuardiaoDasMemorias.Repository.Queries.Tema;
 using GuardiaoDasMemorias.Repository.Commands.Tema;
+using GuardiaoDasMemorias.Entities.Tema;
 
 namespace GuardiaoDasMemorias.Controllers
 {
@@ -47,7 +47,7 @@ namespace GuardiaoDasMemorias.Controllers
         /// Cria um novo tema
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] Tema tema)
+        public async Task<ActionResult> Create([FromBody] Temas tema)
         {
             var id = await _temaCommands.CreateAsync(tema);
             var temaCreated = await _temaQueries.GetByIdAsync(id);
@@ -58,7 +58,7 @@ namespace GuardiaoDasMemorias.Controllers
         /// Atualiza um tema existente
         /// </summary>
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, [FromBody] Tema temaAtualizado)
+        public async Task<ActionResult> Update(int id, [FromBody] Temas temaAtualizado)
         {
             var temaExistente = await _temaQueries.GetByIdAsync(id);
             if (temaExistente == null)

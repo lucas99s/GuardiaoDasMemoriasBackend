@@ -13,7 +13,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Template
                 ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-        public async Task<int> CreateAsync(Entities.Template template)
+        public async Task<int> CreateAsync(Entities.Template.Templates template)
         {
             using var connection = new NpgsqlConnection(_connectionString);
             
@@ -25,7 +25,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Template
             return await connection.ExecuteScalarAsync<int>(sql, template);
         }
 
-        public async Task<bool> UpdateAsync(Entities.Template template)
+        public async Task<bool> UpdateAsync(Entities.Template.Templates template)
         {
             using var connection = new NpgsqlConnection(_connectionString);
             

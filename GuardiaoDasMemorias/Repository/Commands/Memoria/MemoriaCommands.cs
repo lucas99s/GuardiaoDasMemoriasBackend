@@ -16,7 +16,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Memoria
             _hashService = hashService ?? throw new ArgumentNullException(nameof(hashService));
         }
 
-        public async Task<int> CreateAsync(Entities.Memoria memoria)
+        public async Task<int> CreateAsync(Entities.Memoria.Memorias memoria)
         {
             using var connection = new NpgsqlConnection(_connectionString);
 
@@ -32,7 +32,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Memoria
             return await connection.ExecuteScalarAsync<int>(sql, memoria);
         }
 
-        public async Task<bool> UpdateAsync(Entities.Memoria memoria)
+        public async Task<bool> UpdateAsync(Entities.Memoria.Memorias memoria)
         {
             using var connection = new NpgsqlConnection(_connectionString);
             

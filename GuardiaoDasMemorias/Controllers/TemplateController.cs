@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using GuardiaoDasMemorias.Entities;
 using GuardiaoDasMemorias.Repository.Queries.Template;
 using GuardiaoDasMemorias.Repository.Commands.Template;
+using GuardiaoDasMemorias.Entities.Template;
 
 namespace GuardiaoDasMemorias.Controllers
 {
@@ -46,7 +46,7 @@ namespace GuardiaoDasMemorias.Controllers
         /// Cria um novo template
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] Template template)
+        public async Task<ActionResult> Create([FromBody] Templates template)
         {
             var id = await _templateCommands.CreateAsync(template);
             var templateCreated = await _templateQueries.GetByIdAsync(id);
@@ -57,7 +57,7 @@ namespace GuardiaoDasMemorias.Controllers
         /// Atualiza um template existente
         /// </summary>
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, [FromBody] Template templateAtualizado)
+        public async Task<ActionResult> Update(int id, [FromBody] Templates templateAtualizado)
         {
             var templateExistente = await _templateQueries.GetByIdAsync(id);
             if (templateExistente == null)

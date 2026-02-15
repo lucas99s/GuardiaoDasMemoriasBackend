@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using GuardiaoDasMemorias.Entities;
+using GuardiaoDasMemorias.Entities.Memoria;
 using GuardiaoDasMemorias.DTOs.Memoria;
 using GuardiaoDasMemorias.Repository.Queries.Memoria;
 using GuardiaoDasMemorias.Repository.Commands.Memoria;
@@ -68,7 +68,7 @@ namespace GuardiaoDasMemorias.Controllers
         [Authorize]
         public async Task<ActionResult> Create([FromBody] MemoriaDto memoriaDto)
         {
-            var memoria = new Memoria
+            var memoria = new Memorias
             {
                 TemaId = memoriaDto.TemaId,
                 TemplateId = memoriaDto.TemplateId,
@@ -94,7 +94,7 @@ namespace GuardiaoDasMemorias.Controllers
                 return NotFound(new { message = "Memória não encontrada" });
             }
 
-            var memoriaAtualizada = new Memoria
+            var memoriaAtualizada = new Memorias
             {
                 Id = id,
                 TemaId = memoriaDto.TemaId,

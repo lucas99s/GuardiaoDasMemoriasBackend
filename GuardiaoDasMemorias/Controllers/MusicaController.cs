@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using GuardiaoDasMemorias.Entities;
 using GuardiaoDasMemorias.Repository.Queries.Musica;
 using GuardiaoDasMemorias.Repository.Commands.Musica;
 using GuardiaoDasMemorias.Services.CloudflareR2;
+using GuardiaoDasMemorias.Entities.Musica;
 
 namespace GuardiaoDasMemorias.Controllers
 {
@@ -53,7 +53,7 @@ namespace GuardiaoDasMemorias.Controllers
         /// Cria uma nova música
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] Musica musica)
+        public async Task<ActionResult> Create([FromBody] Musicas musica)
         {
             var id = await _musicaCommands.CreateAsync(musica);
             var musicaCreated = await _musicaQueries.GetByIdAsync(id);
@@ -64,7 +64,7 @@ namespace GuardiaoDasMemorias.Controllers
         /// Atualiza uma música existente
         /// </summary>
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, [FromBody] Musica musicaAtualizada)
+        public async Task<ActionResult> Update(int id, [FromBody] Musicas musicaAtualizada)
         {
             var musicaExistente = await _musicaQueries.GetByIdAsync(id);
             if (musicaExistente == null)
@@ -112,7 +112,7 @@ namespace GuardiaoDasMemorias.Controllers
                 var fileUrl = await _r2Service.UploadFileAsync(stream, arquivo.FileName, hash, arquivo.ContentType);
 
                 // Salvar registro no banco de dados
-                var musica = new Musica
+                var musica = new Musicas
                 {
                     Nome = nome,
                     Caminho = fileUrl,

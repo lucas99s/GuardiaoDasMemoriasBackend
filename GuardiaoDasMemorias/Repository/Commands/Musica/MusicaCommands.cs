@@ -13,7 +13,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Musica
                 ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-        public async Task<int> CreateAsync(Entities.Musica musica)
+        public async Task<int> CreateAsync(Entities.Musica.Musicas musica)
         {
             using var connection = new NpgsqlConnection(_connectionString);
             
@@ -25,7 +25,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Musica
             return await connection.ExecuteScalarAsync<int>(sql, musica);
         }
 
-        public async Task<bool> UpdateAsync(Entities.Musica musica)
+        public async Task<bool> UpdateAsync(Entities.Musica.Musicas musica)
         {
             using var connection = new NpgsqlConnection(_connectionString);
             

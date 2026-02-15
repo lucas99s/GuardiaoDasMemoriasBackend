@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using GuardiaoDasMemorias.Entities;
 using GuardiaoDasMemorias.Repository.Queries.Cliente;
 using GuardiaoDasMemorias.Repository.Commands.Cliente;
 using Microsoft.AspNetCore.Authorization;
+using GuardiaoDasMemorias.Entities.Cliente;
 
 namespace GuardiaoDasMemorias.Controllers
 {
@@ -49,7 +49,7 @@ namespace GuardiaoDasMemorias.Controllers
         /// Cria um novo cliente
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] Cliente cliente)
+        public async Task<ActionResult> Create([FromBody] Clientes cliente)
         {
             var id = await _clienteCommands.CreateAsync(cliente);
             var clienteCreated = await _clienteQueries.GetByIdAsync(id);
@@ -60,7 +60,7 @@ namespace GuardiaoDasMemorias.Controllers
         /// Atualiza um cliente existente
         /// </summary>
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, [FromBody] Cliente clienteAtualizado)
+        public async Task<ActionResult> Update(int id, [FromBody] Clientes clienteAtualizado)
         {
             var clienteExistente = await _clienteQueries.GetByIdAsync(id);
             if (clienteExistente == null)
