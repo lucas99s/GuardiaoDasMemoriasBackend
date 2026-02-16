@@ -1,7 +1,8 @@
 ﻿using GuardiaoDasMemorias.Entities.Cliente;
+using GuardiaoDasMemorias.Entities.Musica;
+using GuardiaoDasMemorias.Entities.Pagamentos;
 using GuardiaoDasMemorias.Entities.Tema;
 using GuardiaoDasMemorias.Entities.Template;
-using GuardiaoDasMemorias.Entities.Musica;
 
 namespace GuardiaoDasMemorias.Entities.Memoria
 {
@@ -16,5 +17,6 @@ namespace GuardiaoDasMemorias.Entities.Memoria
         public Temas? Tema { get; set; }
         public Templates? Template { get; set; }
         public ICollection<Musicas> Musicas { get; set; } = new List<Musicas>();
+        public ICollection<ContratoMemoria> Contratos { get; set; } = new List<ContratoMemoria>();
     }
 }

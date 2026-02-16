@@ -6,6 +6,7 @@ using GuardiaoDasMemorias.Entities.Musica;
 using GuardiaoDasMemorias.Entities.Tema;
 using GuardiaoDasMemorias.Entities.Template;
 using GuardiaoDasMemorias.Entities.Memoria;
+using GuardiaoDasMemorias.Entities.Pagamentos;
 
 namespace GuardiaoDasMemorias.Data;
 
@@ -20,6 +21,14 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Musicas> Musicas { get; set; }
     public DbSet<Memorias> Memorias { get; set; }
     public DbSet<Templates> Templates { get; set; }
+    public DbSet<TipoPagamento> TipoPagamentos { get; set; }
+    public DbSet<Planos> Planos { get; set; }
+    public DbSet<PlanoLimites> PlanoLimites { get; set; }
+    public DbSet<PlanoRecursos> PlanoRecursos { get; set; }
+    public DbSet<ContratoStatus> ContratoStatus { get; set; }
+    public DbSet<ContratoOrigem> ContratoOrigens { get; set; }
+    public DbSet<ContratoMemoria> ContratoMemorias { get; set; }
+    public DbSet<ContratoHistorico> ContratoHistoricos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -198,6 +207,324 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
                 .WithMany(m => m.Memorias)
                 .HasForeignKey(e => e.TemplateId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // Configuração da entidade TipoPagamento
+        modelBuilder.Entity<TipoPagamento>(entity =>
+        {
+            entity.ToTable("tipo_pagamento", "pagamento");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .UseIdentityAlwaysColumn();
+            entity.Property(e => e.Nome)
+                .HasColumnName("nome")
+                .IsRequired()
+                .HasMaxLength(50);
+
+            // Seed data - valores padrão
+            entity.HasData(
+                new TipoPagamento { Id = 1, Nome = "Pagamento Único" },
+                new TipoPagamento { Id = 2, Nome = "Assinatura" }
+            );
+        });
+
+        // Configuração da entidade Planos
+        modelBuilder.Entity<Planos>(entity =>
+        {
+            entity.ToTable("planos", "pagamento");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .UseIdentityAlwaysColumn();
+            entity.Property(e => e.TemaId)
+                .HasColumnName("tema_id")
+                .IsRequired();
+            entity.Property(e => e.TipoPagamentoId)
+                .HasColumnName("tipo_pagamento_id")
+                .IsRequired();
+            entity.Property(e => e.Code)
+                .HasColumnName("code")
+                .IsRequired()
+                .HasMaxLength(100);
+            entity.Property(e => e.Nome)
+                .HasColumnName("nome")
+                .IsRequired()
+                .HasMaxLength(200);
+            entity.Property(e => e.Descricao)
+                .HasColumnName("descricao")
+                .HasMaxLength(500);
+            entity.Property(e => e.Preco)
+                .HasColumnName("preco")
+                .IsRequired()
+                .HasPrecision(10, 2); // Precisão para valores monetários
+            entity.Property(e => e.Ativo)
+                .HasColumnName("ativo")
+                .IsRequired()
+                .HasDefaultValue(true);
+            entity.Property(e => e.Ordem)
+                .HasColumnName("ordem")
+                .IsRequired();
+            entity.Property(e => e.Criado)
+                .HasColumnName("criado")
+                .IsRequired();
+            entity.Property(e => e.Atualizado)
+                .HasColumnName("atualizado");
+
+            // Relacionamento com Tema
+            entity.HasOne(p => p.Tema)
+                .WithMany(t => t.Planos)
+                .HasForeignKey(p => p.TemaId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relacionamento com TipoPagamento
+            entity.HasOne(p => p.TipoPagamento)
+                .WithMany(tp => tp.Planos)
+                .HasForeignKey(p => p.TipoPagamentoId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Índices para melhor performance
+            entity.HasIndex(e => e.Code).IsUnique();
+            entity.HasIndex(e => new { e.TemaId, e.Ativo });
+        });
+
+        // Configuração da entidade PlanoLimites
+        modelBuilder.Entity<PlanoLimites>(entity =>
+        {
+            entity.ToTable("plano_limites", "pagamento");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .UseIdentityAlwaysColumn();
+            entity.Property(e => e.PlanoId)
+                .HasColumnName("plano_id")
+                .IsRequired();
+            entity.Property(e => e.Propriedade)
+                .HasColumnName("propriedade")
+                .IsRequired()
+                .HasMaxLength(100);
+            entity.Property(e => e.Valor)
+                .HasColumnName("valor")
+                .IsRequired();
+            entity.Property(e => e.Descricao)
+                .HasColumnName("descricao")
+                .IsRequired()
+                .HasMaxLength(500);
+
+            // Relacionamento com Plano
+            entity.HasOne(pl => pl.Plano)
+                .WithMany(p => p.PlanoLimites)
+                .HasForeignKey(pl => pl.PlanoId)
+                .OnDelete(DeleteBehavior.Cascade); // Cascade: se deletar o plano, deleta os limites
+
+            // Índice composto para evitar duplicação de propriedades por plano
+            entity.HasIndex(e => new { e.PlanoId, e.Propriedade }).IsUnique();
+        });
+
+        // Configuração da entidade PlanoRecursos
+        modelBuilder.Entity<PlanoRecursos>(entity =>
+        {
+            entity.ToTable("plano_recursos", "pagamento");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .UseIdentityAlwaysColumn();
+            entity.Property(e => e.PlanoId)
+                .HasColumnName("plano_id")
+                .IsRequired();
+            entity.Property(e => e.RecursoKey)
+                .HasColumnName("recurso_key")
+                .IsRequired()
+                .HasMaxLength(100);
+            entity.Property(e => e.Descricao)
+                .HasColumnName("descricao")
+                .IsRequired()
+                .HasMaxLength(500);
+            entity.Property(e => e.Ativo)
+                .HasColumnName("ativo")
+                .IsRequired()
+                .HasDefaultValue(true);
+            entity.Property(e => e.Ordem)
+                .HasColumnName("ordem")
+                .IsRequired();
+
+            // Relacionamento com Plano
+            entity.HasOne(pr => pr.Plano)
+                .WithMany(p => p.PlanoRecursos)
+                .HasForeignKey(pr => pr.PlanoId)
+                .OnDelete(DeleteBehavior.Cascade); // Cascade: se deletar o plano, deleta os recursos
+
+            // Índices para buscar recursos por plano e evitar duplicação
+            entity.HasIndex(e => new { e.PlanoId, e.RecursoKey }).IsUnique();
+            entity.HasIndex(e => new { e.PlanoId, e.Ativo, e.Ordem });
+        });
+
+        // Configuração da entidade ContratoStatus
+        modelBuilder.Entity<ContratoStatus>(entity =>
+        {
+            entity.ToTable("contrato_status", "pagamento");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .UseIdentityAlwaysColumn();
+            entity.Property(e => e.Nome)
+                .HasColumnName("nome")
+                .IsRequired()
+                .HasMaxLength(50);
+
+            // Seed data - valores padrão
+            entity.HasData(
+                new ContratoStatus { Id = 1, Nome = "Pendente" },
+                new ContratoStatus { Id = 2, Nome = "Ativo" },
+                new ContratoStatus { Id = 3, Nome = "Cancelado" },
+                new ContratoStatus { Id = 4, Nome = "Expirado" }
+            );
+        });
+
+        // Configuração da entidade ContratoOrigem
+        modelBuilder.Entity<ContratoOrigem>(entity =>
+        {
+            entity.ToTable("contrato_origem", "pagamento");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .UseIdentityAlwaysColumn();
+            entity.Property(e => e.Nome)
+                .HasColumnName("nome")
+                .IsRequired()
+                .HasMaxLength(50);
+
+            // Seed data - valores padrão
+            entity.HasData(
+                new ContratoOrigem { Id = 1, Nome = "Compra no Site" },
+                new ContratoOrigem { Id = 2, Nome = "Afiliado" },
+                new ContratoOrigem { Id = 3, Nome = "Presente Admin" }
+            );
+        });
+
+        // Configuração da entidade ContratoMemoria
+        modelBuilder.Entity<ContratoMemoria>(entity =>
+        {
+            entity.ToTable("contrato_memoria", "pagamento");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .UseIdentityAlwaysColumn();
+            entity.Property(e => e.MemoriaId)
+                .HasColumnName("memoria_id")
+                .IsRequired();
+            entity.Property(e => e.PlanoId)
+                .HasColumnName("plano_id")
+                .IsRequired();
+            entity.Property(e => e.ContratoStatusId)
+                .HasColumnName("contrato_status_id")
+                .IsRequired();
+            entity.Property(e => e.ContratoOrigemId)
+                .HasColumnName("contrato_origem_id")
+                .IsRequired();
+            entity.Property(e => e.ClienteId)
+                .HasColumnName("cliente_id")
+                .IsRequired();
+            entity.Property(e => e.ValorPago)
+                .HasColumnName("valor_pago")
+                .IsRequired()
+                .HasPrecision(10, 2);
+            entity.Property(e => e.TransacaoId)
+                .HasColumnName("transacao_id")
+                .HasMaxLength(200);
+            entity.Property(e => e.CriadoEm)
+                .HasColumnName("criado_em")
+                .IsRequired();
+            entity.Property(e => e.PagoEm)
+                .HasColumnName("pago_em");
+            entity.Property(e => e.ExpiraEm)
+                .HasColumnName("expira_em");
+            entity.Property(e => e.CanceladoEm)
+                .HasColumnName("cancelado_em");
+
+            // Relacionamento com Memoria
+            entity.HasOne(cm => cm.Memoria)
+                .WithMany(m => m.Contratos)
+                .HasForeignKey(cm => cm.MemoriaId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relacionamento com Plano
+            entity.HasOne(cm => cm.Plano)
+                .WithMany(p => p.Contratos)
+                .HasForeignKey(cm => cm.PlanoId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relacionamento com ContratoStatus
+            entity.HasOne(cm => cm.ContratoStatus)
+                .WithMany(cs => cs.ContratoMemorias)
+                .HasForeignKey(cm => cm.ContratoStatusId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relacionamento com ContratoOrigem
+            entity.HasOne(cm => cm.ContratoOrigem)
+                .WithMany(co => co.ContratoMemorias)
+                .HasForeignKey(cm => cm.ContratoOrigemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relacionamento com Cliente (comprador)
+            entity.HasOne(cm => cm.Cliente)
+                .WithMany(c => c.Contratos)
+                .HasForeignKey(cm => cm.ClienteId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Índices para melhor performance
+            entity.HasIndex(e => e.MemoriaId);
+            entity.HasIndex(e => e.ClienteId);
+            entity.HasIndex(e => new { e.ContratoStatusId, e.ExpiraEm });
+        });
+
+        // Configuração da entidade ContratoHistorico
+        modelBuilder.Entity<ContratoHistorico>(entity =>
+        {
+            entity.ToTable("contrato_historico", "pagamento");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .UseIdentityAlwaysColumn();
+            entity.Property(e => e.ContratoAntigoId)
+                .HasColumnName("contrato_antigo_id")
+                .IsRequired();
+            entity.Property(e => e.ContratoNovoId)
+                .HasColumnName("contrato_novo_id")
+                .IsRequired();
+            entity.Property(e => e.TipoMudanca)
+                .HasColumnName("tipo_mudanca")
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.Observacao)
+                .HasColumnName("observacao")
+                .HasMaxLength(1000);
+            entity.Property(e => e.RealizadoEm)
+                .HasColumnName("realizado_em")
+                .IsRequired();
+
+            // Relacionamento com ContratoMemoria (Antigo)
+            entity.HasOne(ch => ch.ContratoAntigo)
+                .WithMany(cm => cm.HistoricoComoAntigo)
+                .HasForeignKey(ch => ch.ContratoAntigoId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relacionamento com ContratoMemoria (Novo)
+            entity.HasOne(ch => ch.ContratoNovo)
+                .WithMany(cm => cm.HistoricoComoNovo)
+                .HasForeignKey(ch => ch.ContratoNovoId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Índices para rastreamento e performance
+            entity.HasIndex(e => e.ContratoAntigoId);
+            entity.HasIndex(e => e.ContratoNovoId);
+            entity.HasIndex(e => new { e.TipoMudanca, e.RealizadoEm });
+            
+            // Garantir que um contrato não seja antigo e novo ao mesmo tempo
+            entity.HasCheckConstraint(
+                "CK_ContratoHistorico_DiferentesContratos",
+                "contrato_antigo_id != contrato_novo_id"
+            );
         });
     }
 }
