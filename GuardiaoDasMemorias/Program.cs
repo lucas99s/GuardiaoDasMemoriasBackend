@@ -1,22 +1,26 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using GuardiaoDasMemorias.Data;
+﻿using GuardiaoDasMemorias.Data;
 using GuardiaoDasMemorias.Models;
-using GuardiaoDasMemorias.Repository.Queries.Cliente;
 using GuardiaoDasMemorias.Repository.Commands.Cliente;
-using GuardiaoDasMemorias.Repository.Queries.Memoria;
 using GuardiaoDasMemorias.Repository.Commands.Memoria;
-using GuardiaoDasMemorias.Repository.Queries.Tema;
-using GuardiaoDasMemorias.Repository.Commands.Tema;
-using GuardiaoDasMemorias.Repository.Queries.Musica;
 using GuardiaoDasMemorias.Repository.Commands.Musica;
-using GuardiaoDasMemorias.Repository.Queries.Template;
+using GuardiaoDasMemorias.Repository.Commands.Pagamento.Contratos;
+using GuardiaoDasMemorias.Repository.Commands.Pagamento.Planos;
+using GuardiaoDasMemorias.Repository.Commands.Tema;
 using GuardiaoDasMemorias.Repository.Commands.Template;
+using GuardiaoDasMemorias.Repository.Queries.Cliente;
+using GuardiaoDasMemorias.Repository.Queries.Memoria;
+using GuardiaoDasMemorias.Repository.Queries.Musica;
+using GuardiaoDasMemorias.Repository.Queries.Pagamento.Contratos;
+using GuardiaoDasMemorias.Repository.Queries.Pagamento.Planos;
+using GuardiaoDasMemorias.Repository.Queries.Tema;
+using GuardiaoDasMemorias.Repository.Queries.Template;
 using GuardiaoDasMemorias.Services;
 using GuardiaoDasMemorias.Services.CloudflareR2;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -93,6 +97,10 @@ builder.Services.AddScoped<IMusicaQueries, MusicaQueries>();
 builder.Services.AddScoped<IMusicaCommands, MusicaCommands>();
 builder.Services.AddScoped<ITemplateQueries, TemplateQueries>();
 builder.Services.AddScoped<ITemplateCommands, TemplateCommands>();
+builder.Services.AddScoped<IPlanoCommands, PlanoCommands>();
+builder.Services.AddScoped<IPlanoQueries, PlanoQueries>();
+builder.Services.AddScoped<IContratoCommands, ContratoCommands>();
+builder.Services.AddScoped<IContratoQueries, ContratoQueries>();
 
 builder.Services.AddSwaggerGen(c =>
 {
