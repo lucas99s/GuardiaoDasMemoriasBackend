@@ -37,7 +37,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Contratos
                     pago_em AS ""PagoEm"",
                     expira_em AS ""ExpiraEm"",
                     cancelado_em AS ""CanceladoEm""
-                FROM pagamento.contrato_memoria
+                FROM contrato.contrato_memoria
                 WHERE id = @Id";
 
             return await connection.QueryFirstOrDefaultAsync<ContratoDto>(sql, new { Id = id });
@@ -64,7 +64,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Contratos
                     pago_em AS ""PagoEm"",
                     expira_em AS ""ExpiraEm"",
                     cancelado_em AS ""CanceladoEm""
-                FROM pagamento.contrato_memoria
+                FROM contrato.contrato_memoria
                 ORDER BY criado_em DESC";
 
             return await connection.QueryAsync<ContratoDto>(sql);
@@ -91,7 +91,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Contratos
                     pago_em AS ""PagoEm"",
                     expira_em AS ""ExpiraEm"",
                     cancelado_em AS ""CanceladoEm""
-                FROM pagamento.contrato_memoria
+                FROM contrato.contrato_memoria
                 WHERE cliente_id = @ClienteId
                 ORDER BY criado_em DESC";
 
@@ -119,7 +119,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Contratos
                     pago_em AS ""PagoEm"",
                     expira_em AS ""ExpiraEm"",
                     cancelado_em AS ""CanceladoEm""
-                FROM pagamento.contrato_memoria
+                FROM contrato.contrato_memoria
                 WHERE memoria_id = @MemoriaId
                 ORDER BY criado_em DESC";
 
@@ -148,7 +148,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Contratos
                     pago_em AS ""PagoEm"",
                     expira_em AS ""ExpiraEm"",
                     cancelado_em AS ""CanceladoEm""
-                FROM pagamento.contrato_memoria
+                FROM contrato.contrato_memoria
                 WHERE memoria_id = @MemoriaId AND contrato_status_id = 2";
 
             return await connection.QueryFirstOrDefaultAsync<ContratoDto>(sql, new { MemoriaId = memoriaId });
@@ -179,7 +179,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Contratos
                     pago_em AS ""PagoEm"",
                     expira_em AS ""ExpiraEm"",
                     cancelado_em AS ""CanceladoEm""
-                FROM pagamento.contrato_memoria
+                FROM contrato.contrato_memoria
                 WHERE contrato_status_id = @StatusId
                 ORDER BY criado_em DESC";
 
@@ -250,11 +250,11 @@ namespace GuardiaoDasMemorias.Repository.Queries.Contratos
                     cm.pago_em AS ""PagoEm"",
                     cm.expira_em AS ""ExpiraEm"",
                     cm.cancelado_em AS ""CanceladoEm""
-                FROM pagamento.contrato_memoria cm
+                FROM contrato.contrato_memoria cm
                 LEFT JOIN memoria.memorias m ON cm.memoria_id = m.id
-                LEFT JOIN pagamento.planos p ON cm.plano_id = p.id
-                LEFT JOIN pagamento.contrato_status cs ON cm.contrato_status_id = cs.id
-                LEFT JOIN pagamento.contrato_origem co ON cm.contrato_origem_id = co.id
+                LEFT JOIN plano.planos p ON cm.plano_id = p.id
+                LEFT JOIN contrato.contrato_status cs ON cm.contrato_status_id = cs.id
+                LEFT JOIN contrato.contrato_origem co ON cm.contrato_origem_id = co.id
                 LEFT JOIN cliente.clientes c ON cm.cliente_id = c.id
                 WHERE cm.id = @Id";
 
@@ -296,11 +296,11 @@ namespace GuardiaoDasMemorias.Repository.Queries.Contratos
                     cm.pago_em AS ""PagoEm"",
                     cm.expira_em AS ""ExpiraEm"",
                     cm.cancelado_em AS ""CanceladoEm""
-                FROM pagamento.contrato_memoria cm
+                FROM contrato.contrato_memoria cm
                 LEFT JOIN memoria.memorias m ON cm.memoria_id = m.id
-                LEFT JOIN pagamento.planos p ON cm.plano_id = p.id
-                LEFT JOIN pagamento.contrato_status cs ON cm.contrato_status_id = cs.id
-                LEFT JOIN pagamento.contrato_origem co ON cm.contrato_origem_id = co.id
+                LEFT JOIN plano.planos p ON cm.plano_id = p.id
+                LEFT JOIN contrato.contrato_status cs ON cm.contrato_status_id = cs.id
+                LEFT JOIN contrato.contrato_origem co ON cm.contrato_origem_id = co.id
                 LEFT JOIN cliente.clientes c ON cm.cliente_id = c.id
                 WHERE cm.cliente_id = @ClienteId
                 ORDER BY cm.criado_em DESC";
@@ -333,7 +333,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Contratos
                     pago_em AS ""PagoEm"",
                     expira_em AS ""ExpiraEm"",
                     cancelado_em AS ""CanceladoEm""
-                FROM pagamento.contrato_memoria
+                FROM contrato.contrato_memoria
                 WHERE 
                     contrato_status_id = 2 AND
                     expira_em IS NOT NULL AND
@@ -366,7 +366,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Contratos
                     pago_em AS ""PagoEm"",
                     expira_em AS ""ExpiraEm"",
                     cancelado_em AS ""CanceladoEm""
-                FROM pagamento.contrato_memoria
+                FROM contrato.contrato_memoria
                 WHERE transacao_id = @TransacaoId";
 
             return await connection.QueryAsync<ContratoDto>(sql, new { TransacaoId = transacaoId });
@@ -393,7 +393,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Contratos
                     pago_em AS ""PagoEm"",
                     expira_em AS ""ExpiraEm"",
                     cancelado_em AS ""CanceladoEm""
-                FROM pagamento.contrato_memoria
+                FROM contrato.contrato_memoria
                 WHERE transacao_id = @TransacaoId AND cliente_id = @ClienteId";
 
             return await connection.QueryFirstOrDefaultAsync<ContratoDto>(sql, 
@@ -419,7 +419,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Contratos
                     tipo_mudanca AS ""TipoMudanca"",
                     observacao AS ""Observacao"",
                     realizado_em AS ""RealizadoEm""
-                FROM pagamento.contrato_historico
+                FROM contrato.contrato_historico
                 WHERE contrato_antigo_id = @ContratoId OR contrato_novo_id = @ContratoId
                 ORDER BY realizado_em DESC";
 
@@ -441,7 +441,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Contratos
                     tipo_mudanca AS ""TipoMudanca"",
                     observacao AS ""Observacao"",
                     realizado_em AS ""RealizadoEm""
-                FROM pagamento.contrato_historico
+                FROM contrato.contrato_historico
                 WHERE contrato_antigo_id = @ContratoId
                 ORDER BY realizado_em DESC
                 LIMIT 1";
@@ -464,7 +464,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Contratos
                     tipo_mudanca AS ""TipoMudanca"",
                     observacao AS ""Observacao"",
                     realizado_em AS ""RealizadoEm""
-                FROM pagamento.contrato_historico
+                FROM contrato.contrato_historico
                 WHERE contrato_novo_id = @ContratoId
                 ORDER BY realizado_em DESC
                 LIMIT 1";
@@ -487,7 +487,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Contratos
                     tipo_mudanca AS ""TipoMudanca"",
                     observacao AS ""Observacao"",
                     realizado_em AS ""RealizadoEm""
-                FROM pagamento.contrato_historico
+                FROM contrato.contrato_historico
                 WHERE tipo_mudanca = @TipoMudanca
                 ORDER BY realizado_em DESC";
 

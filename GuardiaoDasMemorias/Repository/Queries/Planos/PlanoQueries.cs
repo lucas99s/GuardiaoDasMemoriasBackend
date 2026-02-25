@@ -36,7 +36,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Planos
                     ordem AS ""Ordem"",
                     criado AS ""Criado"",
                     atualizado AS ""Atualizado""
-                FROM pagamento.planos
+                FROM plano.planos
                 ORDER BY ordem, nome";
 
             return await connection.QueryAsync<PlanoDto>(sql);
@@ -62,7 +62,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Planos
                     ordem AS ""Ordem"",
                     criado AS ""Criado"",
                     atualizado AS ""Atualizado""
-                FROM pagamento.planos
+                FROM plano.planos
                 WHERE ativo = true
                 ORDER BY ordem, nome";
 
@@ -89,7 +89,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Planos
                     ordem AS ""Ordem"",
                     criado AS ""Criado"",
                     atualizado AS ""Atualizado""
-                FROM pagamento.planos
+                FROM plano.planos
                 WHERE id = @Id";
 
             return await connection.QueryFirstOrDefaultAsync<PlanoDto>(sql, new { Id = id });
@@ -115,7 +115,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Planos
                     ordem AS ""Ordem"",
                     criado AS ""Criado"",
                     atualizado AS ""Atualizado""
-                FROM pagamento.planos
+                FROM plano.planos
                 WHERE code = @Code";
 
             return await connection.QueryFirstOrDefaultAsync<PlanoDto>(sql, new { Code = code });
@@ -141,7 +141,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Planos
                     ordem AS ""Ordem"",
                     criado AS ""Criado"",
                     atualizado AS ""Atualizado""
-                FROM pagamento.planos
+                FROM plano.planos
                 WHERE tema_id = @TemaId
                 ORDER BY ordem, nome";
 
@@ -168,7 +168,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Planos
                     ordem AS ""Ordem"",
                     criado AS ""Criado"",
                     atualizado AS ""Atualizado""
-                FROM pagamento.planos
+                FROM plano.planos
                 WHERE tema_id = @TemaId AND ativo = true
                 ORDER BY ordem, nome";
 
@@ -195,7 +195,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Planos
                     ordem AS ""Ordem"",
                     criado AS ""Criado"",
                     atualizado AS ""Atualizado""
-                FROM pagamento.planos
+                FROM plano.planos
                 WHERE tipo_pagamento_id = @TipoPagamentoId
                 ORDER BY ordem, nome";
 
@@ -224,9 +224,9 @@ namespace GuardiaoDasMemorias.Repository.Queries.Planos
                     p.ordem AS ""Ordem"",
                     p.criado AS ""Criado"",
                     p.atualizado AS ""Atualizado""
-                FROM pagamento.planos p
+                FROM plano.planos p
                 LEFT JOIN tema.temas t ON p.tema_id = t.id
-                LEFT JOIN pagamento.tipo_pagamento tp ON p.tipo_pagamento_id = tp.id
+                LEFT JOIN plano.tipo_pagamento tp ON p.tipo_pagamento_id = tp.id
                 WHERE p.id = @Id";
 
             var plano = await connection.QueryFirstOrDefaultAsync<PlanoComDetalhesDto>(sql, new { Id = id });
@@ -261,7 +261,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Planos
                     propriedade AS ""Propriedade"",
                     valor AS ""Valor"",
                     descricao AS ""Descricao""
-                FROM pagamento.plano_limites
+                FROM plano.plano_limites
                 WHERE plano_id = @PlanoId
                 ORDER BY propriedade";
 
@@ -282,7 +282,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Planos
                     propriedade AS ""Propriedade"",
                     valor AS ""Valor"",
                     descricao AS ""Descricao""
-                FROM pagamento.plano_limites
+                FROM plano.plano_limites
                 WHERE id = @Id";
 
             return await connection.QueryFirstOrDefaultAsync<PlanoLimiteDto>(sql, new { Id = id });
@@ -302,7 +302,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Planos
                     propriedade AS ""Propriedade"",
                     valor AS ""Valor"",
                     descricao AS ""Descricao""
-                FROM pagamento.plano_limites
+                FROM plano.plano_limites
                 WHERE plano_id = @PlanoId AND propriedade = @Propriedade";
 
             return await connection.QueryFirstOrDefaultAsync<PlanoLimiteDto>(sql, 
@@ -328,7 +328,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Planos
                     descricao AS ""Descricao"",
                     ativo AS ""Ativo"",
                     ordem AS ""Ordem""
-                FROM pagamento.plano_recursos
+                FROM plano.plano_recursos
                 WHERE plano_id = @PlanoId
                 ORDER BY ordem, recurso_key";
 
@@ -350,7 +350,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Planos
                     descricao AS ""Descricao"",
                     ativo AS ""Ativo"",
                     ordem AS ""Ordem""
-                FROM pagamento.plano_recursos
+                FROM plano.plano_recursos
                 WHERE plano_id = @PlanoId AND ativo = true
                 ORDER BY ordem, recurso_key";
 
@@ -372,7 +372,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Planos
                     descricao AS ""Descricao"",
                     ativo AS ""Ativo"",
                     ordem AS ""Ordem""
-                FROM pagamento.plano_recursos
+                FROM plano.plano_recursos
                 WHERE id = @Id";
 
             return await connection.QueryFirstOrDefaultAsync<PlanoRecursoDto>(sql, new { Id = id });
@@ -393,7 +393,7 @@ namespace GuardiaoDasMemorias.Repository.Queries.Planos
                     descricao AS ""Descricao"",
                     ativo AS ""Ativo"",
                     ordem AS ""Ordem""
-                FROM pagamento.plano_recursos
+                FROM plano.plano_recursos
                 WHERE plano_id = @PlanoId AND recurso_key = @RecursoKey";
 
             return await connection.QueryFirstOrDefaultAsync<PlanoRecursoDto>(sql, 

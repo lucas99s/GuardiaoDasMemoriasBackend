@@ -22,7 +22,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Planos
             using var connection = new NpgsqlConnection(_connectionString);
 
             var sql = @"
-                INSERT INTO pagamento.planos 
+                INSERT INTO plano.planos 
                     (tema_id, tipo_pagamento_id, code, nome, descricao, preco, ativo, ordem, criado, atualizado)
                 VALUES 
                     (@TemaId, @TipoPagamentoId, @Code, @Nome, @Descricao, @Preco, @Ativo, @Ordem, @Criado, @Atualizado)
@@ -39,7 +39,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Planos
             using var connection = new NpgsqlConnection(_connectionString);
 
             var sql = @"
-                UPDATE pagamento.planos
+                UPDATE plano.planos
                 SET 
                     tema_id = @TemaId,
                     tipo_pagamento_id = @TipoPagamentoId,
@@ -63,7 +63,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Planos
         {
             using var connection = new NpgsqlConnection(_connectionString);
 
-            var sql = @"DELETE FROM pagamento.planos WHERE id = @Id";
+            var sql = @"DELETE FROM plano.planos WHERE id = @Id";
 
             var rowsAffected = await connection.ExecuteAsync(sql, new { Id = id });
             return rowsAffected > 0;
@@ -77,7 +77,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Planos
             using var connection = new NpgsqlConnection(_connectionString);
 
             var sql = @"
-                UPDATE pagamento.planos
+                UPDATE plano.planos
                 SET ativo = false, atualizado = @DataAtualizado
                 WHERE id = @Id";
 
@@ -94,7 +94,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Planos
             using var connection = new NpgsqlConnection(_connectionString);
 
             var sql = @"
-                UPDATE pagamento.planos
+                UPDATE plano.planos
                 SET ativo = true, atualizado = @DataAtualizado
                 WHERE id = @Id";
 
@@ -111,7 +111,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Planos
             using var connection = new NpgsqlConnection(_connectionString);
 
             var sql = @"
-                INSERT INTO pagamento.plano_limites 
+                INSERT INTO plano.plano_limites 
                     (plano_id, propriedade, valor, descricao)
                 VALUES 
                     (@PlanoId, @Propriedade, @Valor, @Descricao)";
@@ -127,7 +127,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Planos
         {
             using var connection = new NpgsqlConnection(_connectionString);
 
-            var sql = @"DELETE FROM pagamento.plano_limites WHERE id = @Id";
+            var sql = @"DELETE FROM plano.plano_limites WHERE id = @Id";
 
             var rowsAffected = await connection.ExecuteAsync(sql, new { Id = id });
             return rowsAffected > 0;
@@ -141,7 +141,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Planos
             using var connection = new NpgsqlConnection(_connectionString);
 
             var sql = @"
-                UPDATE pagamento.plano_limites
+                UPDATE plano.plano_limites
                 SET 
                     propriedade = @Propriedade,
                     valor = @Valor,
@@ -160,7 +160,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Planos
             using var connection = new NpgsqlConnection(_connectionString);
 
             var sql = @"
-                INSERT INTO pagamento.plano_recursos 
+                INSERT INTO plano.plano_recursos 
                     (plano_id, recurso_key, descricao, ativo, ordem)
                 VALUES 
                     (@PlanoId, @RecursoKey, @Descricao, @Ativo, @Ordem)";
@@ -176,7 +176,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Planos
         {
             using var connection = new NpgsqlConnection(_connectionString);
 
-            var sql = @"DELETE FROM pagamento.plano_recursos WHERE id = @Id";
+            var sql = @"DELETE FROM plano.plano_recursos WHERE id = @Id";
 
             var rowsAffected = await connection.ExecuteAsync(sql, new { Id = id });
             return rowsAffected > 0;
@@ -190,7 +190,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Planos
             using var connection = new NpgsqlConnection(_connectionString);
 
             var sql = @"
-                UPDATE pagamento.plano_recursos
+                UPDATE plano.plano_recursos
                 SET 
                     recurso_key = @RecursoKey,
                     descricao = @Descricao,

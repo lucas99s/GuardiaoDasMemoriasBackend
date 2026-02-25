@@ -22,7 +22,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Contratos
             using var connection = new NpgsqlConnection(_connectionString);
 
             var sql = @"
-                INSERT INTO pagamento.contrato_memoria 
+                INSERT INTO contrato.contrato_memoria 
                     (memoria_id, plano_id, contrato_status_id, contrato_origem_id, cliente_id, 
                      valor_pago, transacao_id, criado_em, pago_em, expira_em, cancelado_em)
                 VALUES 
@@ -41,7 +41,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Contratos
             using var connection = new NpgsqlConnection(_connectionString);
 
             var sql = @"
-                UPDATE pagamento.contrato_memoria
+                UPDATE contrato.contrato_memoria
                 SET 
                     memoria_id = @MemoriaId,
                     plano_id = @PlanoId,
@@ -66,7 +66,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Contratos
         {
             using var connection = new NpgsqlConnection(_connectionString);
 
-            var sql = @"DELETE FROM pagamento.contrato_memoria WHERE id = @Id";
+            var sql = @"DELETE FROM contrato.contrato_memoria WHERE id = @Id";
 
             var rowsAffected = await connection.ExecuteAsync(sql, new { Id = id });
             return rowsAffected > 0;
@@ -80,7 +80,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Contratos
             using var connection = new NpgsqlConnection(_connectionString);
 
             var sql = @"
-                UPDATE pagamento.contrato_memoria
+                UPDATE contrato.contrato_memoria
                 SET 
                     contrato_status_id = 2,
                     pago_em = @DataPagamento,
@@ -101,7 +101,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Contratos
             using var connection = new NpgsqlConnection(_connectionString);
 
             var sql = @"
-                UPDATE pagamento.contrato_memoria
+                UPDATE contrato.contrato_memoria
                 SET 
                     contrato_status_id = 3,
                     cancelado_em = @DataCancelamento
@@ -121,7 +121,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Contratos
             using var connection = new NpgsqlConnection(_connectionString);
 
             var sql = @"
-                UPDATE pagamento.contrato_memoria
+                UPDATE contrato.contrato_memoria
                 SET contrato_status_id = 4
                 WHERE id = @Id AND expira_em <= @DataAtual";
 
@@ -139,7 +139,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Contratos
             using var connection = new NpgsqlConnection(_connectionString);
 
             var sql = @"
-                UPDATE pagamento.contrato_memoria
+                UPDATE contrato.contrato_memoria
                 SET contrato_status_id = @NovoStatusId
                 WHERE id = @Id";
 
@@ -157,7 +157,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Contratos
             using var connection = new NpgsqlConnection(_connectionString);
 
             var sql = @"
-                INSERT INTO pagamento.contrato_historico 
+                INSERT INTO contrato.contrato_historico 
                     (contrato_antigo_id, contrato_novo_id, tipo_mudanca, observacao, realizado_em)
                 VALUES 
                     (@ContratoAntigoId, @ContratoNovoId, @TipoMudanca, @Observacao, @RealizadoEm)";
@@ -187,7 +187,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Contratos
                 {
                     // 1. Marca contrato antigo como cancelado
                     var sqlCancelar = @"
-                        UPDATE pagamento.contrato_memoria
+                        UPDATE contrato.contrato_memoria
                         SET 
                             contrato_status_id = 3,
                             cancelado_em = @DataCancelamento
@@ -199,7 +199,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Contratos
 
                     // 2. Marca novo contrato como ativo
                     var sqlAtivar = @"
-                        UPDATE pagamento.contrato_memoria
+                        UPDATE contrato.contrato_memoria
                         SET contrato_status_id = 2
                         WHERE id = @ContratoNovoId";
 
@@ -209,7 +209,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Contratos
 
                     // 3. Cria registro de histórico
                     var sqlHistorico = @"
-                        INSERT INTO pagamento.contrato_historico 
+                        INSERT INTO contrato.contrato_historico 
                             (contrato_antigo_id, contrato_novo_id, tipo_mudanca, observacao, realizado_em)
                         VALUES 
                             (@ContratoAntigoId, @ContratoNovoId, @TipoMudanca, @Observacao, @RealizadoEm)";

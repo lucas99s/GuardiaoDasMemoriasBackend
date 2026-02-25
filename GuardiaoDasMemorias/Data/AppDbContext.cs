@@ -213,7 +213,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         // Configuração da entidade TipoPagamento
         modelBuilder.Entity<TipoPagamento>(entity =>
         {
-            entity.ToTable("tipo_pagamento", "pagamento");
+            entity.ToTable("tipo_pagamento", "plano");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id)
                 .HasColumnName("id")
@@ -233,7 +233,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         // Configuração da entidade Planos
         modelBuilder.Entity<Planos>(entity =>
         {
-            entity.ToTable("planos", "pagamento");
+            entity.ToTable("planos", "plano");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id)
                 .HasColumnName("id")
@@ -292,7 +292,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         // Configuração da entidade PlanoLimites
         modelBuilder.Entity<PlanoLimites>(entity =>
         {
-            entity.ToTable("plano_limites", "pagamento");
+            entity.ToTable("plano_limites", "plano");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id)
                 .HasColumnName("id")
@@ -325,7 +325,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         // Configuração da entidade PlanoRecursos
         modelBuilder.Entity<PlanoRecursos>(entity =>
         {
-            entity.ToTable("plano_recursos", "pagamento");
+            entity.ToTable("plano_recursos", "plano");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id)
                 .HasColumnName("id")
@@ -363,7 +363,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         // Configuração da entidade ContratoStatus
         modelBuilder.Entity<ContratoStatus>(entity =>
         {
-            entity.ToTable("contrato_status", "pagamento");
+            entity.ToTable("contrato_status", "contrato");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id)
                 .HasColumnName("id")
@@ -385,7 +385,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         // Configuração da entidade ContratoOrigem
         modelBuilder.Entity<ContratoOrigem>(entity =>
         {
-            entity.ToTable("contrato_origem", "pagamento");
+            entity.ToTable("contrato_origem", "contrato");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id)
                 .HasColumnName("id")
@@ -406,7 +406,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         // Configuração da entidade ContratoMemoria
         modelBuilder.Entity<ContratoMemoria>(entity =>
         {
-            entity.ToTable("contrato_memoria", "pagamento");
+            entity.ToTable("contrato_memoria", "contrato");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id)
                 .HasColumnName("id")
@@ -482,7 +482,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         // Configuração da entidade ContratoHistorico
         modelBuilder.Entity<ContratoHistorico>(entity =>
         {
-            entity.ToTable("contrato_historico", "pagamento");
+            entity.ToTable("contrato_historico", "contrato");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id)
                 .HasColumnName("id")
