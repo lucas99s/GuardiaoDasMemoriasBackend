@@ -1,5 +1,5 @@
 ﻿using GuardiaoDasMemorias.Entities.Memoria;
-using GuardiaoDasMemorias.Entities.Pagamentos;
+using GuardiaoDasMemorias.Entities.Plano;
 using GuardiaoDasMemorias.Entities.Template;
 
 namespace GuardiaoDasMemorias.Entities.Tema

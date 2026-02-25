@@ -6,7 +6,8 @@ using GuardiaoDasMemorias.Entities.Musica;
 using GuardiaoDasMemorias.Entities.Tema;
 using GuardiaoDasMemorias.Entities.Template;
 using GuardiaoDasMemorias.Entities.Memoria;
-using GuardiaoDasMemorias.Entities.Pagamentos;
+using GuardiaoDasMemorias.Entities.Contrato;
+using GuardiaoDasMemorias.Entities.Plano;
 
 namespace GuardiaoDasMemorias.Data;
 

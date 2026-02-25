@@ -1,4 +1,4 @@
-﻿namespace GuardiaoDasMemorias.Entities.Pagamentos
+﻿namespace GuardiaoDasMemorias.Entities.Contrato
 {
     public class ContratoHistorico
     {

@@ -1,10 +1,12 @@
-﻿namespace GuardiaoDasMemorias.Repository.Commands.Pagamento.Contratos
+﻿using GuardiaoDasMemorias.Entities.Contrato;
+
+namespace GuardiaoDasMemorias.Repository.Commands.Contratos
 {
     public interface IContratoCommands
     {
         // ContratoMemoria
-        Task<int> CreateAsync(Entities.Pagamentos.ContratoMemoria contrato);
-        Task<bool> UpdateAsync(Entities.Pagamentos.ContratoMemoria contrato);
+        Task<int> CreateAsync(ContratoMemoria contrato);
+        Task<bool> UpdateAsync(ContratoMemoria contrato);
         Task<bool> DeleteAsync(int id);
         Task<bool> MarkAsPaidAsync(int id, string? transacaoId);
         Task<bool> MarkAsCanceledAsync(int id);
@@ -12,7 +14,7 @@
         Task<bool> ChangeStatusAsync(int id, int novoStatusId);
         
         // ContratoHistorico
-        Task<bool> CreateHistoricoAsync(Entities.Pagamentos.ContratoHistorico historico);
+        Task<bool> CreateHistoricoAsync(ContratoHistorico historico);
         Task<bool> ProcessUpgradeAsync(int contratoAntigoId, int contratoNovoId, string tipoMudanca, string? observacao);
     }
 }

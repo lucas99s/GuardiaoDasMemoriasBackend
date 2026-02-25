@@ -1,5 +1,5 @@
-﻿using GuardiaoDasMemorias.Entities.Memoria;
-using GuardiaoDasMemorias.Entities.Pagamentos;
+﻿using GuardiaoDasMemorias.Entities.Contrato;
+using GuardiaoDasMemorias.Entities.Memoria;
 
 namespace GuardiaoDasMemorias.Entities.Cliente
 {

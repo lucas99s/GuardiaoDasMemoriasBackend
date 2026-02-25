@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using GuardiaoDasMemorias.Repository.Queries.Pagamento.Planos;
-using GuardiaoDasMemorias.Repository.Commands.Pagamento.Planos;
-using GuardiaoDasMemorias.Entities.Pagamentos;
 using Microsoft.AspNetCore.Authorization;
+using GuardiaoDasMemorias.Entities.Plano;
+using GuardiaoDasMemorias.Repository.Queries.Planos;
+using GuardiaoDasMemorias.Repository.Commands.Planos;
 
 namespace GuardiaoDasMemorias.Controllers
 {

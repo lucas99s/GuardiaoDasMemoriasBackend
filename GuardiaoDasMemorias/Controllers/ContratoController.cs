@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using GuardiaoDasMemorias.Repository.Queries.Pagamento.Contratos;
-using GuardiaoDasMemorias.Repository.Commands.Pagamento.Contratos;
-using GuardiaoDasMemorias.Entities.Pagamentos;
 using Microsoft.AspNetCore.Authorization;
+using GuardiaoDasMemorias.Entities.Contrato;
+using GuardiaoDasMemorias.Repository.Queries.Contratos;
+using GuardiaoDasMemorias.Repository.Commands.Contratos;
 
 namespace GuardiaoDasMemorias.Controllers
 {

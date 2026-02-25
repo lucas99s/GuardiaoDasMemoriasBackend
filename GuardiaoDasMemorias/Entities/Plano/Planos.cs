@@ -1,6 +1,7 @@
-﻿using GuardiaoDasMemorias.Entities.Tema;
+﻿using GuardiaoDasMemorias.Entities.Contrato;
+using GuardiaoDasMemorias.Entities.Tema;
 
-namespace GuardiaoDasMemorias.Entities.Pagamentos
+namespace GuardiaoDasMemorias.Entities.Plano
 {
     public class Planos
     {

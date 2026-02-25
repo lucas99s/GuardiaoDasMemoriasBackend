@@ -1,4 +1,4 @@
-namespace GuardiaoDasMemorias.DTOs.Pagamento
+namespace GuardiaoDasMemorias.DTOs.Plano
 {
     public class PlanoRecursoDto
     {

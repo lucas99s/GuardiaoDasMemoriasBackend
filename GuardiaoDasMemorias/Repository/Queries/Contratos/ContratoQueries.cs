@@ -2,7 +2,7 @@
 using GuardiaoDasMemorias.DTOs.Pagamento;
 using Npgsql;
 
-namespace GuardiaoDasMemorias.Repository.Queries.Pagamento.Contratos
+namespace GuardiaoDasMemorias.Repository.Queries.Contratos
 {
     public class ContratoQueries : IContratoQueries
     {

@@ -1,7 +1,8 @@
 ﻿using Dapper;
+using GuardiaoDasMemorias.Entities.Plano;
 using Npgsql;
 
-namespace GuardiaoDasMemorias.Repository.Commands.Pagamento.Planos
+namespace GuardiaoDasMemorias.Repository.Commands.Planos
 {
     public class PlanoCommands : IPlanoCommands
     {
@@ -16,7 +17,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Pagamento.Planos
         /// <summary>
         /// Cria um novo plano
         /// </summary>
-        public async Task<int> CreateAsync(Entities.Pagamentos.Planos plano)
+        public async Task<int> CreateAsync(Entities.Plano.Planos plano)
         {
             using var connection = new NpgsqlConnection(_connectionString);
 
@@ -33,7 +34,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Pagamento.Planos
         /// <summary>
         /// Atualiza um plano existente
         /// </summary>
-        public async Task<bool> UpdateAsync(Entities.Pagamentos.Planos plano)
+        public async Task<bool> UpdateAsync(Entities.Plano.Planos plano)
         {
             using var connection = new NpgsqlConnection(_connectionString);
 
@@ -105,7 +106,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Pagamento.Planos
         /// <summary>
         /// Adiciona um limite a um plano
         /// </summary>
-        public async Task<bool> AddLimiteAsync(Entities.Pagamentos.PlanoLimites limite)
+        public async Task<bool> AddLimiteAsync(PlanoLimites limite)
         {
             using var connection = new NpgsqlConnection(_connectionString);
 
@@ -135,7 +136,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Pagamento.Planos
         /// <summary>
         /// Atualiza um limite de um plano
         /// </summary>
-        public async Task<bool> UpdateLimiteAsync(Entities.Pagamentos.PlanoLimites limite)
+        public async Task<bool> UpdateLimiteAsync(PlanoLimites limite)
         {
             using var connection = new NpgsqlConnection(_connectionString);
 
@@ -154,7 +155,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Pagamento.Planos
         /// <summary>
         /// Adiciona um recurso a um plano
         /// </summary>
-        public async Task<bool> AddRecursoAsync(Entities.Pagamentos.PlanoRecursos recurso)
+        public async Task<bool> AddRecursoAsync(PlanoRecursos recurso)
         {
             using var connection = new NpgsqlConnection(_connectionString);
 
@@ -184,7 +185,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Pagamento.Planos
         /// <summary>
         /// Atualiza um recurso de um plano
         /// </summary>
-        public async Task<bool> UpdateRecursoAsync(Entities.Pagamentos.PlanoRecursos recurso)
+        public async Task<bool> UpdateRecursoAsync(PlanoRecursos recurso)
         {
             using var connection = new NpgsqlConnection(_connectionString);
 

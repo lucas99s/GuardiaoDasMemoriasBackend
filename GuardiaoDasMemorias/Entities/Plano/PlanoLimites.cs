@@ -1,4 +1,4 @@
-﻿namespace GuardiaoDasMemorias.Entities.Pagamentos
+﻿namespace GuardiaoDasMemorias.Entities.Plano
 {
     public class PlanoLimites
     {

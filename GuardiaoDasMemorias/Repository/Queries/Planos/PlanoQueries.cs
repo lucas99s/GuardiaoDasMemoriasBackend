@@ -1,8 +1,8 @@
 ﻿using Dapper;
-using GuardiaoDasMemorias.DTOs.Pagamento;
+using GuardiaoDasMemorias.DTOs.Plano;
 using Npgsql;
 
-namespace GuardiaoDasMemorias.Repository.Queries.Pagamento.Planos
+namespace GuardiaoDasMemorias.Repository.Queries.Planos
 {
     public class PlanoQueries : IPlanoQueries
     {

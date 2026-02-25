@@ -1,6 +1,6 @@
 ﻿using GuardiaoDasMemorias.DTOs.Pagamento;
 
-namespace GuardiaoDasMemorias.Repository.Queries.Pagamento.Contratos
+namespace GuardiaoDasMemorias.Repository.Queries.Contratos
 {
     public interface IContratoQueries
     {

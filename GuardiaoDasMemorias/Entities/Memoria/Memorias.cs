@@ -1,6 +1,6 @@
 ﻿using GuardiaoDasMemorias.Entities.Cliente;
+using GuardiaoDasMemorias.Entities.Contrato;
 using GuardiaoDasMemorias.Entities.Musica;
-using GuardiaoDasMemorias.Entities.Pagamentos;
 using GuardiaoDasMemorias.Entities.Tema;
 using GuardiaoDasMemorias.Entities.Template;
 

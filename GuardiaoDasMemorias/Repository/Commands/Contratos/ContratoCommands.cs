@@ -1,7 +1,8 @@
 ﻿using Dapper;
+using GuardiaoDasMemorias.Entities.Contrato;
 using Npgsql;
 
-namespace GuardiaoDasMemorias.Repository.Commands.Pagamento.Contratos
+namespace GuardiaoDasMemorias.Repository.Commands.Contratos
 {
     public class ContratoCommands : IContratoCommands
     {
@@ -16,7 +17,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Pagamento.Contratos
         /// <summary>
         /// Cria um novo contrato de memória
         /// </summary>
-        public async Task<int> CreateAsync(Entities.Pagamentos.ContratoMemoria contrato)
+        public async Task<int> CreateAsync(ContratoMemoria contrato)
         {
             using var connection = new NpgsqlConnection(_connectionString);
 
@@ -35,7 +36,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Pagamento.Contratos
         /// <summary>
         /// Atualiza um contrato existente
         /// </summary>
-        public async Task<bool> UpdateAsync(Entities.Pagamentos.ContratoMemoria contrato)
+        public async Task<bool> UpdateAsync(ContratoMemoria contrato)
         {
             using var connection = new NpgsqlConnection(_connectionString);
 
@@ -151,7 +152,7 @@ namespace GuardiaoDasMemorias.Repository.Commands.Pagamento.Contratos
         /// <summary>
         /// Cria um registro de histórico de mudança de contrato
         /// </summary>
-        public async Task<bool> CreateHistoricoAsync(Entities.Pagamentos.ContratoHistorico historico)
+        public async Task<bool> CreateHistoricoAsync(ContratoHistorico historico)
         {
             using var connection = new NpgsqlConnection(_connectionString);
 

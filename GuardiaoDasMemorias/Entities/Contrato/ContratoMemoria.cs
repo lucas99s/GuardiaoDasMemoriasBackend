@@ -1,7 +1,8 @@
 ﻿using GuardiaoDasMemorias.Entities.Cliente;
 using GuardiaoDasMemorias.Entities.Memoria;
+using GuardiaoDasMemorias.Entities.Plano;
 
-namespace GuardiaoDasMemorias.Entities.Pagamentos
+namespace GuardiaoDasMemorias.Entities.Contrato
 {
     public class ContratoMemoria
     {
